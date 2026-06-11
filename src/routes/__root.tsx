@@ -77,14 +77,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Anup Kankale — WordPress Developer & AI Integration Specialist" },
+      { name: "description", content: "Anup Kankale builds fast WordPress websites, custom plugins and AI-powered automations. WordPress Core contributor from Mumbai, India." },
+      { name: "author", content: "Anup Kankale" },
+      { property: "og:title", content: "Anup Kankale — WordPress & AI Developer" },
+      { property: "og:description", content: "Freelance WordPress development, custom plugins and AI integrations — no matter your requirements." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Anup Kankale — WordPress & AI Developer" },
+      { name: "twitter:description", content: "Freelance WordPress development, custom plugins and AI integrations." },
     ],
     links: [
       {
