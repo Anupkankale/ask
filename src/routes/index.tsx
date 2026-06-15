@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import anupHero from "../assets/anup-hero.png";
+import { ParallaxSvgBackground } from "../components/parallax-svg-background";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,7 +25,9 @@ const services = [
 
 function Home() {
   return (
-    <>
+    <div className="relative isolate overflow-hidden">
+      <ParallaxSvgBackground />
+      <div className="relative z-10">
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-6xl gap-12 px-6 pt-16 pb-24 md:grid-cols-[1.1fr_0.9fr] md:items-center md:pt-24">
           <div>
@@ -130,6 +133,7 @@ function Home() {
           <div className="absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-accent/20 blur-3xl" />
         </div>
       </section>
-    </>
+      </div>
+    </div>
   );
 }
