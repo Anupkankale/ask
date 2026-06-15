@@ -6,33 +6,45 @@ export function ParallaxSvgBackground() {
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let frame = 0;
+    if (reduceMotion.matches) return;
 
-    const update = () => {
-      frame = 0;
-      if (reduceMotion.matches) return;
+    const scrollRef = { y: 0, lastY: -1 };
+    let rafId = 0;
+    let ticking = false;
 
-      const scrollY = window.scrollY;
-      if (slowLayer.current) {
-        slowLayer.current.style.transform = `translate3d(0, ${scrollY * -0.08}px, 0)`;
-      }
-      if (fastLayer.current) {
-        fastLayer.current.style.transform = `translate3d(0, ${scrollY * -0.16}px, 0)`;
+    const apply = () => {
+      ticking = false;
+      const y = scrollRef.y;
+      if (y === scrollRef.lastY) return;
+      scrollRef.lastY = y;
+
+      const slow = slowLayer.current;
+      const fast = fastLayer.current;
+      if (slow) slow.style.transform = `translate3d(0,${y * -0.08}px,0)`;
+      if (fast) fast.style.transform = `translate3d(0,${y * -0.16}px,0)`;
+    };
+
+    const onScroll = () => {
+      scrollRef.y = window.scrollY;
+      if (!ticking) {
+        ticking = true;
+        rafId = requestAnimationFrame(apply);
       }
     };
 
-    const handleScroll = () => {
-      if (!frame) frame = window.requestAnimationFrame(update);
-    };
+    // initial positioning
+    scrollRef.y = window.scrollY;
+    scrollRef.lastY = scrollRef.y;
+    apply();
 
-    update();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    reduceMotion.addEventListener("change", update);
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      reduceMotion.removeEventListener("change", update);
-      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        ticking = false;
+      }
     };
   }, []);
 
