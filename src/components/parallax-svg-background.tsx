@@ -40,7 +40,8 @@ export function ParallaxSvgBackground() {
     window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
-      window.removeEventId) {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) {
         cancelAnimationFrame(rafId);
         ticking = false;
       }
