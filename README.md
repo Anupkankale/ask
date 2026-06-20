@@ -173,13 +173,12 @@ The preview server also starts on `http://localhost:8080` (or the next available
 
 ## Key Features
 
-- **Homepage** — Hero section, services grid, stats, and CTA
-- **About** — Background, skills, and open-source contributions
-- **Services** — Detailed breakdown of WordPress, AI, and automation offerings
-- **Projects** — Portfolio of past work
-- **Blog** — Articles and insights
-- **Contact** — Easy way to reach out for freelance work
-- **SEO** — Semantic HTML, meta tags, Open Graph, dynamic sitemap.xml
+- **Headless WordPress backend** — Blog, Projects, and Services are managed in WP and exposed via REST + ACF
+- **Dynamic blog** — List + single-post pages (`/blog`, `/blog/$slug`) with featured images and ACF fields
+- **Projects & Services** — Custom Post Types in WP with rich ACF fields (tech stack, gallery, features, pricing)
+- **Contact form** — React Hook Form + Zod, server-side validation, saves submissions to WP as private posts, honeypot anti-spam
+- **SEO** — Semantic HTML, meta tags, Open Graph, dynamic `sitemap.xml`
+- **Graceful fallbacks** — Site renders cleanly even before WP is connected
 
 ---
 
