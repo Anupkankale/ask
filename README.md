@@ -5,6 +5,12 @@
 
 A fast, modern portfolio website built with **TanStack Start**, **React 19**, **Tailwind CSS v4**, and **shadcn/ui**. Designed to showcase services, projects, blog posts, and make it easy for potential clients to get in touch.
 
+The site runs as a **headless frontend** powered by a self-hosted WordPress
+backend (REST API + ACF). Content for the blog, projects, and services is
+edited in WP and fetched server-side. The contact form posts back to WP as
+private submissions. See [`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md) for the
+one-time WP setup steps.
+
 ---
 
 ## Tech Stack
@@ -21,6 +27,7 @@ A fast, modern portfolio website built with **TanStack Start**, **React 19**, **
 | Carousel | Embla Carousel |
 | Build Tool | Vite 7 |
 | Package Manager | Bun |
+| Backend (CMS) | Headless WordPress + ACF + REST API |
 
 ---
 
@@ -78,9 +85,20 @@ npm install
 
 ### 3. Environment variables
 
-This project does **not require any environment variables** for basic local development.
+The frontend reads its content from a WordPress backend. For full
+functionality (blog, projects, services, contact form), set these in a
+`.env` file at the project root:
 
-If you later add server-side features (e.g., a database, API keys), create a `.env` file in the project root:
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `WP_API_URL` | yes | Base URL of your WP REST API, e.g. `https://yoursite.com/wp-json` |
+| `WP_APP_USER` | for contact form | Your WordPress username |
+| `WP_APP_PASSWORD` | for contact form | An Application Password (Users → Profile → Application Passwords) |
+
+Without `WP_API_URL`, the site still runs — blog/projects/services show
+fallback content and the contact form returns a friendly "backend not
+connected" error. See [`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md) for the
+full WP-side setup (plugins, CPTs, ACF fields, CORS snippet).
 
 ```bash
 # Example — only needed once you add external services
@@ -155,13 +173,12 @@ The preview server also starts on `http://localhost:8080` (or the next available
 
 ## Key Features
 
-- **Homepage** — Hero section, services grid, stats, and CTA
-- **About** — Background, skills, and open-source contributions
-- **Services** — Detailed breakdown of WordPress, AI, and automation offerings
-- **Projects** — Portfolio of past work
-- **Blog** — Articles and insights
-- **Contact** — Easy way to reach out for freelance work
-- **SEO** — Semantic HTML, meta tags, Open Graph, dynamic sitemap.xml
+- **Headless WordPress backend** — Blog, Projects, and Services are managed in WP and exposed via REST + ACF
+- **Dynamic blog** — List + single-post pages (`/blog`, `/blog/$slug`) with featured images and ACF fields
+- **Projects & Services** — Custom Post Types in WP with rich ACF fields (tech stack, gallery, features, pricing)
+- **Contact form** — React Hook Form + Zod, server-side validation, saves submissions to WP as private posts, honeypot anti-spam
+- **SEO** — Semantic HTML, meta tags, Open Graph, dynamic `sitemap.xml`
+- **Graceful fallbacks** — Site renders cleanly even before WP is connected
 
 ---
 

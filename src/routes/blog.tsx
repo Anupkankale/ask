@@ -1,5 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
+import { listPosts } from "../lib/wp/content.functions";
+import { getFeaturedImage, getAcfImage, plainText } from "../lib/wp/types";
+
+const postsQueryOptions = queryOptions({
+  queryKey: ["wp", "posts"],
+  queryFn: () => listPosts(),
+  staleTime: 60_000,
+});
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
@@ -10,17 +19,27 @@ export const Route = createFileRoute("/blog")({
       { property: "og:description", content: "Notes on WordPress, open source and AI." },
     ],
   }),
+  loader: ({ context }) => {
+    context.queryClient.ensureQueryData(postsQueryOptions);
+  },
   component: Blog,
 });
 
-const drafts = [
-  { date: "Coming soon", title: "My journey to becoming a WordPress Core contributor", excerpt: "How I went from filing my first Trac ticket to landing a credit in the WordPress 7.0 release." },
-  { date: "Coming soon", title: "AI + WordPress: the future of website building", excerpt: "Practical patterns for embedding LLMs into WordPress without breaking the editorial experience." },
-  { date: "Coming soon", title: "Building custom WordPress plugins that don&apos;t age badly", excerpt: "Architecture, testing and the boring habits that keep a plugin alive for years." },
-  { date: "Coming soon", title: "WordCamp Asia — what I took home", excerpt: "Talks, hallway conversations and ideas worth bringing back to client work." },
-];
+function formatDate(value: string) {
+  try {
+    return new Date(value).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return value;
+  }
+}
 
 function Blog() {
+  const { data: posts } = useSuspenseQuery(postsQueryOptions);
+
   return (
     <>
       <PageHero
@@ -29,16 +48,46 @@ function Blog() {
         lead="A slow blog. I write roughly every couple of weeks about things I actually use at work."
       />
       <section className="mx-auto max-w-3xl px-6 py-20 space-y-6">
-        {drafts.map((d) => (
-          <article key={d.title} className="rounded-2xl border border-border bg-card p-6 transition hover:border-accent">
-            <p className="font-display text-xs tracking-widest text-accent">{d.date}</p>
-            <h2 className="mt-2 text-xl text-primary" dangerouslySetInnerHTML={{ __html: d.title }} />
-            <p className="mt-2 text-sm text-muted-foreground leading-relaxed" dangerouslySetInnerHTML={{ __html: d.excerpt }} />
-          </article>
-        ))}
-        <p className="text-center text-sm text-muted-foreground">
-          Want an email when the first post lands? <a href="mailto:hello@anupkankale.com" className="text-accent font-semibold">Drop me a line.</a>
-        </p>
+        {posts.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center">
+            <p className="font-display text-xs tracking-widest text-accent">COMING SOON</p>
+            <h2 className="mt-3 text-xl text-primary">No posts published yet</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              The blog is connected to a headless WordPress backend. Once posts go live there, they will appear here automatically.
+            </p>
+          </div>
+        ) : (
+          posts.map((post) => {
+            const cover = getAcfImage(post.acf?.cover_image) ?? getFeaturedImage(post);
+            const excerpt = post.acf?.excerpt_custom ?? plainText(post.excerpt.rendered, 220);
+            return (
+              <Link
+                key={post.id}
+                to="/blog/$slug"
+                params={{ slug: post.slug }}
+                className="block rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-0.5 hover:border-accent"
+              >
+                <p className="font-display text-xs tracking-widest text-accent">
+                  {formatDate(post.date)}
+                  {post.acf?.reading_time ? ` · ${post.acf.reading_time} MIN READ` : ""}
+                </p>
+                <h2
+                  className="mt-2 text-xl text-primary"
+                  dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+                />
+                {cover ? (
+                  <img
+                    src={cover}
+                    alt=""
+                    loading="lazy"
+                    className="mt-4 aspect-[16/9] w-full rounded-xl object-cover"
+                  />
+                ) : null}
+                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{excerpt}</p>
+              </Link>
+            );
+          })
+        )}
       </section>
     </>
   );
