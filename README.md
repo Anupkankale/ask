@@ -5,6 +5,12 @@
 
 A fast, modern portfolio website built with **TanStack Start**, **React 19**, **Tailwind CSS v4**, and **shadcn/ui**. Designed to showcase services, projects, blog posts, and make it easy for potential clients to get in touch.
 
+The site runs as a **headless frontend** powered by a self-hosted WordPress
+backend (REST API + ACF). Content for the blog, projects, and services is
+edited in WP and fetched server-side. The contact form posts back to WP as
+private submissions. See [`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md) for the
+one-time WP setup steps.
+
 ---
 
 ## Tech Stack
@@ -21,6 +27,7 @@ A fast, modern portfolio website built with **TanStack Start**, **React 19**, **
 | Carousel | Embla Carousel |
 | Build Tool | Vite 7 |
 | Package Manager | Bun |
+| Backend (CMS) | Headless WordPress + ACF + REST API |
 
 ---
 
