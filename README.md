@@ -50,33 +50,93 @@ public/                # Static public assets
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) (recommended) or Node.js 20+
+| Tool | Minimum Version | Notes |
+|------|----------------|-------|
+| [Bun](https://bun.sh/) | 1.1+ | **Recommended** — ships with its own fast JS runtime and package manager |
+| Node.js | 20+ | Only needed if you prefer `npm` / `npx` over Bun |
 
-### Install dependencies
+> **No Python is required** — this is a pure TypeScript / React project.
 
+### 1. Clone the repository
+
+```bash
+git clone <repo-url>
+cd <repo-folder>
+```
+
+### 2. Install dependencies
+
+**With Bun (recommended):**
 ```bash
 bun install
 ```
 
-### Run the development server
+**With npm:**
+```bash
+npm install
+```
 
+### 3. Environment variables
+
+This project does **not require any environment variables** for basic local development.
+
+If you later add server-side features (e.g., a database, API keys), create a `.env` file in the project root:
+
+```bash
+# Example — only needed once you add external services
+DATABASE_URL=your_database_url
+STRIPE_SECRET_KEY=your_stripe_key
+```
+
+> **Important:** Public values that must reach the browser must use the `VITE_` prefix (e.g., `VITE_PUBLIC_URL`). Never put secrets in `VITE_` variables — they ship to the client.
+
+### 4. Run the development server
+
+**With Bun:**
 ```bash
 bun run dev
 ```
 
-The site will be available at `http://localhost:8080` by default.
+**With npm:**
+```bash
+npm run dev
+```
 
-### Build for production
+The site will be available at **`http://localhost:8080`** by default.
 
+### 5. Build for production
+
+**With Bun:**
 ```bash
 bun run build
 ```
 
-### Preview the production build
+**With npm:**
+```bash
+npm run build
+```
 
+### 6. Preview the production build locally
+
+**With Bun:**
 ```bash
 bun run preview
 ```
+
+**With npm:**
+```bash
+npm run preview
+```
+
+The preview server also starts on `http://localhost:8080` (or the next available port).
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `bun: command not found` | Install Bun: `curl -fsSL https://bun.sh/install \| bash` |
+| Port 8080 already in use | The dev server will auto-pick the next port, or set `PORT=3000 bun run dev` |
+| `Cannot find module '@/*'` | Make sure `vite-tsconfig-paths` resolved correctly — re-run `bun install` |
 
 ---
 
