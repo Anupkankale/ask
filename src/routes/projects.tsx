@@ -1,5 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
+import { listProjects } from "../lib/wp/content.functions";
+import { getFeaturedImage, normaliseStringList, plainText } from "../lib/wp/types";
+
+const projectsQueryOptions = queryOptions({
+  queryKey: ["wp", "projects"],
+  queryFn: () => listProjects(),
+  staleTime: 60_000,
+});
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
@@ -10,10 +19,13 @@ export const Route = createFileRoute("/projects")({
       { property: "og:description", content: "Selected WordPress, plugin and AI integration projects." },
     ],
   }),
+  loader: ({ context }) => {
+    context.queryClient.ensureQueryData(projectsQueryOptions);
+  },
   component: Projects,
 });
 
-const projects = [
+const fallbackProjects = [
   {
     tag: "ENTERPRISE WORDPRESS",
     title: "90+ page corporate website",
@@ -47,6 +59,37 @@ const projects = [
 ];
 
 function Projects() {
+  const { data: wpProjects } = useSuspenseQuery(projectsQueryOptions);
+
+  const items =
+    wpProjects.length > 0
+      ? wpProjects.map((p) => {
+          const cover = getFeaturedImage(p);
+          const tech = normaliseStringList(p.acf?.tech_stack);
+          return {
+            id: String(p.id),
+            tag: (p.acf?.tag || p.acf?.role || "PROJECT").toString().toUpperCase(),
+            title: p.title.rendered,
+            body: plainText(p.excerpt.rendered, 220) || plainText(p.content.rendered, 220),
+            cover,
+            tech,
+            liveUrl: p.acf?.live_url,
+            repoUrl: p.acf?.repo_url,
+            isHtml: true,
+          };
+        })
+      : fallbackProjects.map((p) => ({
+          id: p.title,
+          tag: p.tag,
+          title: p.title,
+          body: p.body,
+          cover: null as string | null,
+          tech: [] as string[],
+          liveUrl: undefined as string | undefined,
+          repoUrl: undefined as string | undefined,
+          isHtml: false,
+        }));
+
   return (
     <>
       <PageHero
@@ -55,11 +98,41 @@ function Projects() {
         lead="A small sample of recent client and open-source work. Want more detail on any of these? Reach out and I&apos;ll happily walk you through them."
       />
       <section className="mx-auto max-w-6xl px-6 py-20 grid gap-6 md:grid-cols-2">
-        {projects.map((p) => (
-          <article key={p.title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 transition hover:-translate-y-1 hover:border-accent">
+        {items.map((p) => (
+          <article key={p.id} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 transition hover:-translate-y-1 hover:border-accent">
             <p className="font-display text-xs tracking-widest text-accent">{p.tag}</p>
-            <h2 className="mt-3 text-2xl text-primary">{p.title}</h2>
+            {p.isHtml ? (
+              <h2 className="mt-3 text-2xl text-primary" dangerouslySetInnerHTML={{ __html: p.title }} />
+            ) : (
+              <h2 className="mt-3 text-2xl text-primary">{p.title}</h2>
+            )}
+            {p.cover ? (
+              <img src={p.cover} alt="" loading="lazy" className="mt-4 aspect-[16/9] w-full rounded-xl object-cover" />
+            ) : null}
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{p.body}</p>
+            {p.tech.length > 0 ? (
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {p.tech.map((t) => (
+                  <li key={t} className="rounded-full border border-border bg-background px-2.5 py-1 text-xs text-muted-foreground">
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            {(p.liveUrl || p.repoUrl) ? (
+              <div className="mt-5 flex gap-3 text-xs font-semibold">
+                {p.liveUrl ? (
+                  <a href={p.liveUrl} target="_blank" rel="noreferrer" className="text-accent hover:underline">
+                    Live →
+                  </a>
+                ) : null}
+                {p.repoUrl ? (
+                  <a href={p.repoUrl} target="_blank" rel="noreferrer" className="text-accent hover:underline">
+                    Repo →
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
           </article>
         ))}
       </section>
