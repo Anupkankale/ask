@@ -65,16 +65,16 @@ function Projects() {
     wpProjects.length > 0
       ? wpProjects.map((p) => {
           const cover = getFeaturedImage(p);
-          const tech = normaliseStringList(p.acf?.tech_stack);
+          const tech = normaliseStringList(p.meta?.tech_stack);
           return {
             id: String(p.id),
-            tag: (p.acf?.tag || p.acf?.role || "PROJECT").toString().toUpperCase(),
+            tag: (p.meta?.tag || p.meta?.role || "PROJECT").toString().toUpperCase(),
             title: p.title.rendered,
             body: plainText(p.excerpt.rendered, 220) || plainText(p.content.rendered, 220),
             cover,
             tech,
-            liveUrl: p.acf?.live_url,
-            repoUrl: p.acf?.repo_url,
+            liveUrl: p.meta?.live_url,
+            repoUrl: p.meta?.repo_url,
             isHtml: true,
           };
         })

@@ -1,6 +1,6 @@
-// Shared WordPress REST + ACF response types. Kept narrow — extend as
-// new ACF fields are added on the WP side. Optional fields handle the
-// case where ACF returns `false` or omits keys for empty values.
+// Shared WordPress REST response types. Uses native post meta (no ACF /
+// no paid plugins). Field names mirror the meta keys registered via
+// `register_post_meta(... 'show_in_rest' => true ...)` in functions.php.
 
 export interface WPRendered {
   rendered: string;
@@ -42,44 +42,48 @@ export interface WPBase {
   _embedded?: WPEmbedded;
 }
 
-// ACF shapes (mirrors the field groups documented in WORDPRESS_SETUP.md)
-export interface PostAcf {
+// Meta shapes (mirrors the meta keys registered in functions.php — see
+// WORDPRESS_SETUP.md). All fields optional; missing values come back as
+// "" / 0 from WP, so callers must guard.
+export interface PostMeta {
   excerpt_custom?: string;
   reading_time?: number | string;
-  cover_image?: string | { url: string } | false;
+  cover_image?: string;
   seo_title?: string;
   seo_description?: string;
 }
 
-export interface ProjectAcf {
+export interface ProjectMeta {
   client?: string;
   role?: string;
-  tech_stack?: string | Array<{ tech?: string } | string>;
+  // Comma- or pipe-separated list of techs, e.g. "React, WordPress, n8n"
+  tech_stack?: string;
   live_url?: string;
   repo_url?: string;
-  gallery?: Array<{ url: string; alt?: string } | string> | false;
+  // Comma-separated list of image URLs
+  gallery?: string;
   featured_order?: number;
   tag?: string;
 }
 
-export interface ServiceAcf {
+export interface ServiceMeta {
   icon_name?: string;
   short_description?: string;
-  features?: Array<{ feature_text?: string } | string> | false;
+  // Newline- or pipe-separated feature list
+  features?: string;
   price_from?: string | number;
   order?: number;
 }
 
-export interface PageAcf {
+export interface PageMeta {
   hero_title?: string;
   hero_subtitle?: string;
-  body_blocks?: unknown;
 }
 
-export type WPPost = WPBase & { acf?: PostAcf };
-export type WPProject = WPBase & { acf?: ProjectAcf };
-export type WPService = WPBase & { acf?: ServiceAcf };
-export type WPPage = WPBase & { acf?: PageAcf };
+export type WPPost = WPBase & { meta?: PostMeta };
+export type WPProject = WPBase & { meta?: ProjectMeta };
+export type WPService = WPBase & { meta?: ServiceMeta };
+export type WPPage = WPBase & { meta?: PageMeta };
 
 // ---- Helpers --------------------------------------------------------------
 
@@ -96,33 +100,19 @@ export function getFeaturedImage(item: Pick<WPBase, "_embedded">): string | null
   );
 }
 
-export function getAcfImage(value: PostAcf["cover_image"]): string | null {
+export function getMetaImage(value: string | undefined): string | null {
   if (!value) return null;
-  if (typeof value === "string") return value;
-  if (typeof value === "object" && "url" in value) return value.url;
-  return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
 }
 
 export function normaliseStringList(
-  value: ProjectAcf["tech_stack"] | ServiceAcf["features"],
+  value: string | undefined,
 ): string[] {
   if (!value) return [];
-  if (typeof value === "string") {
-    return value
-      .split(/[,|]/)
-      .map((s) => s.trim())
-      .filter(Boolean);
-  }
-  if (!Array.isArray(value)) return [];
   return value
-    .map((entry) => {
-      if (typeof entry === "string") return entry.trim();
-      if (entry && typeof entry === "object") {
-        if ("feature_text" in entry && entry.feature_text) return String(entry.feature_text).trim();
-        if ("tech" in entry && entry.tech) return String(entry.tech).trim();
-      }
-      return "";
-    })
+    .split(/[,|\n]/)
+    .map((s) => s.trim())
     .filter(Boolean);
 }
 
