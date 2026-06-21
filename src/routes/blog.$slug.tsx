@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-rout
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { getPostBySlug } from "../lib/wp/content.functions";
-import { getFeaturedImage, getAcfImage, plainText } from "../lib/wp/types";
+import { getFeaturedImage, getMetaImage, plainText } from "../lib/wp/types";
 
 const postQueryOptions = (slug: string) =>
   queryOptions({
@@ -37,7 +37,7 @@ function PostPage() {
   const { data: post } = useSuspenseQuery(postQueryOptions(slug));
   if (!post) return <PostNotFound />;
 
-  const cover = getAcfImage(post.acf?.cover_image) ?? getFeaturedImage(post);
+  const cover = getMetaImage(post.meta?.cover_image) ?? getFeaturedImage(post);
   const date = (() => {
     try {
       return new Date(post.date).toLocaleDateString(undefined, {
@@ -57,14 +57,14 @@ function PostPage() {
       </Link>
       <p className="mt-6 font-display text-xs tracking-widest text-accent">
         {date}
-        {post.acf?.reading_time ? ` · ${post.acf.reading_time} MIN READ` : ""}
+        {post.meta?.reading_time ? ` · ${post.meta.reading_time} MIN READ` : ""}
       </p>
       <h1
         className="mt-3 text-4xl text-primary md:text-5xl"
         dangerouslySetInnerHTML={{ __html: post.title.rendered }}
       />
-      {post.acf?.excerpt_custom ? (
-        <p className="mt-4 text-lg text-muted-foreground">{post.acf.excerpt_custom}</p>
+      {post.meta?.excerpt_custom ? (
+        <p className="mt-4 text-lg text-muted-foreground">{post.meta.excerpt_custom}</p>
       ) : (
         <p className="mt-4 text-lg text-muted-foreground">
           {plainText(post.excerpt.rendered, 240)}

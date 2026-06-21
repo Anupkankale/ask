@@ -73,9 +73,9 @@ function Services() {
           id: String(s.id),
           title: s.title.rendered,
           isHtml: true,
-          items: normaliseStringList(s.acf?.features),
-          summary: s.acf?.short_description || plainText(s.excerpt.rendered, 180),
-          priceFrom: s.acf?.price_from,
+          items: normaliseStringList(s.meta?.features),
+          summary: s.meta?.short_description || plainText(s.excerpt.rendered, 180),
+          priceFrom: s.meta?.price_from,
         }))
       : fallbackGroups.map((g) => ({
           id: g.title,

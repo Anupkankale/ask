@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
 import { listPosts } from "../lib/wp/content.functions";
-import { getFeaturedImage, getAcfImage, plainText } from "../lib/wp/types";
+import { getFeaturedImage, getMetaImage, plainText } from "../lib/wp/types";
 
 const postsQueryOptions = queryOptions({
   queryKey: ["wp", "posts"],
@@ -58,8 +58,8 @@ function Blog() {
           </div>
         ) : (
           posts.map((post) => {
-            const cover = getAcfImage(post.acf?.cover_image) ?? getFeaturedImage(post);
-            const excerpt = post.acf?.excerpt_custom ?? plainText(post.excerpt.rendered, 220);
+            const cover = getMetaImage(post.meta?.cover_image) ?? getFeaturedImage(post);
+            const excerpt = post.meta?.excerpt_custom || plainText(post.excerpt.rendered, 220);
             return (
               <Link
                 key={post.id}
@@ -69,7 +69,7 @@ function Blog() {
               >
                 <p className="font-display text-xs tracking-widest text-accent">
                   {formatDate(post.date)}
-                  {post.acf?.reading_time ? ` · ${post.acf.reading_time} MIN READ` : ""}
+                  {post.meta?.reading_time ? ` · ${post.meta.reading_time} MIN READ` : ""}
                 </p>
                 <h2
                   className="mt-2 text-xl text-primary"
