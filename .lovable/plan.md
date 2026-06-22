@@ -1,60 +1,53 @@
-# Free Headless WordPress Plan (No Paid Plugins)
+# Optional WPGraphQL Integration
 
-Drop ACF/ACF-to-REST-API (Pro features) and use only free plugins. Two options for structured fields — pick one:
+Add a second, opt-in data path that talks to WordPress via the free **WPGraphQL** plugin. The existing REST layer (`src/lib/wp/*`) stays as the default fallback, so nothing breaks if GraphQL isn't enabled.
 
-## Option A — REST API + Native Custom Fields (simplest, recommended)
+## How it switches
 
-**Free plugins only:**
-- **Custom Post Type UI** (free) — register `projects`, `services` CPTs
-- **Meta Box Lite** (free) OR **WordPress core "Custom Fields" panel** — add meta fields
-- **Register Meta in REST** — small `functions.php` snippet (provided) to expose meta keys via `/wp-json/wp/v2/...?_fields=meta`
-- **Featured images & categories** — built into core REST API
-- **Contact form** — no plugin needed; we write a custom REST endpoint via `functions.php` that saves submissions to a private CPT `contact_submission`
+A new env var `WP_GRAPHQL_URL` (e.g. `https://yoursite.com/graphql`) activates GraphQL. When set, content server functions prefer GraphQL; when unset, they fall back to the existing REST calls, which in turn fall back to static content. No code changes needed to toggle.
 
-No ACF, no paid add-ons. Everything ships with WP core or free plugins.
+## What gets built
 
-## Option B — WPGraphQL (free, more powerful queries)
+### 1. WordPress side — `WORDPRESS_SETUP.md`
+Add a new section: **"Option B: Enable GraphQL (optional)"**
+- Install free plugins: **WPGraphQL**, **WPGraphQL CPT** (or register CPTs with `show_in_graphql => true`), **WPGraphQL Meta Query** (optional, for native post meta exposure)
+- PHP snippet to expose the custom post meta fields (project/service/post meta) on the GraphQL schema via `register_graphql_field`
+- CORS note (WPGraphQL respects standard CORS headers from the existing snippet)
+- Confirm the endpoint with a sample query
 
-**Free plugins only:**
-- **Custom Post Type UI** + **CPT UI extension for WPGraphQL** (free)
-- **WPGraphQL** (free) — single `/graphql` endpoint
-- **WPGraphQL for Custom Fields (Meta Box)** OR **WPGraphQL Meta** (free)
-- Contact form via a WPGraphQL mutation or a small custom REST endpoint
+### 2. Client layer — `src/lib/wp/graphql.server.ts` (new)
+- Tiny `gqlFetch(query, variables)` wrapper using `fetch` against `process.env.WP_GRAPHQL_URL`
+- Throws on GraphQL errors; returns typed `data`
+- Server-only (no auth, no secrets)
 
-Better for nested queries (post + meta + featured image in one call), but adds a GraphQL client on the frontend.
+### 3. Query definitions — `src/lib/wp/queries.ts` (new)
+- `POSTS_QUERY`, `POST_BY_SLUG_QUERY`, `PROJECTS_QUERY`, `SERVICES_QUERY` as plain string constants
+- Mirror the fields already consumed by the UI (title, slug, excerpt, content, featured image, meta fields)
 
----
+### 4. Content functions — update `src/lib/wp/content.functions.ts`
+For each of `listPosts`, `getPostBySlug`, `listProjects`, `listServices`:
+- If `WP_GRAPHQL_URL` is set → call `gqlFetch` with the matching query, map the GraphQL response into the existing `WPPost` / `WPProject` / `WPService` shapes
+- Else → keep current REST path
+- On any error, fall back to REST, then to static content (existing behavior preserved)
 
-## Recommendation
+Mapping happens inside the handler so the UI components (`blog.tsx`, `blog.$slug.tsx`, `projects.tsx`, `services.tsx`) need **zero changes**.
 
-Go with **Option A (REST + native meta)**. It reuses everything already scaffolded in `src/lib/wp/` and only requires:
+### 5. Docs — `README.md`
+- Add `WP_GRAPHQL_URL` to env vars table as optional
+- One-line note: "Set this to enable GraphQL; leave unset to keep using REST"
 
-1. Removing ACF assumptions from `types.ts` and `content.functions.ts` — read fields from `post.meta.*` instead of `post.acf.*`.
-2. A `functions.php` snippet (in `WORDPRESS_SETUP.md`) that:
-   - Registers post meta with `show_in_rest => true` for each CPT
-   - Adds CORS headers
-   - Registers a `POST /wp-json/site/v1/contact` endpoint that creates `contact_submission` posts (no auth required, with honeypot + rate-limit)
-3. Contact form no longer needs WP Application Password — the custom endpoint is public + spam-protected, so we can drop `WP_APP_USER` / `WP_APP_PASSWORD` secrets entirely. Only `WP_API_URL` and `CONTACT_NOTIFICATION_EMAIL` remain.
-4. Rewrite `WORDPRESS_SETUP.md` to list only free plugins and include the full `functions.php` snippet.
+## Files touched
 
-## Files to update (frontend, in build mode)
+- new: `src/lib/wp/graphql.server.ts`
+- new: `src/lib/wp/queries.ts`
+- edit: `src/lib/wp/content.functions.ts`
+- edit: `WORDPRESS_SETUP.md`
+- edit: `README.md`
 
-- `src/lib/wp/types.ts` — replace `acf` shape with `meta` shape
-- `src/lib/wp/content.functions.ts` — fetch with `?_embed&_fields=...,meta` and map `post.meta.*`
-- `src/routes/blog.$slug.tsx`, `projects.tsx`, `services.tsx` — read from `meta` not `acf`
-- `src/routes/api/public/contact.ts` — POST to `/wp-json/site/v1/contact` (no Basic Auth) + email via Lovable Cloud
-- `WORDPRESS_SETUP.md` — rewrite for free-only stack with the PHP snippet
-- `README.md` — update env vars (remove `WP_APP_USER`, `WP_APP_PASSWORD`)
+No UI changes, no new dependencies (native `fetch` is enough — no Apollo/urql needed since calls are server-side only).
 
-## What you'll need to do on WordPress
+## Out of scope
 
-1. Install free plugins: **Custom Post Type UI**, **Meta Box Lite** (optional, for nicer admin UI)
-2. Paste the `functions.php` snippet from `WORDPRESS_SETUP.md` into your theme's `functions.php` (or use **Code Snippets** free plugin)
-3. Create the CPTs in CPT UI
-4. Add `WP_API_URL` secret in Lovable (and `CONTACT_NOTIFICATION_EMAIL` if you want email notifications)
-
-No paid plugins. No Application Passwords. No ACF.
-
----
-
-Approve to switch to **Option A**, or reply "Option B" if you'd rather use WPGraphQL.
+- Client-side GraphQL (Apollo/urql) — not needed; server functions already shield the client
+- Mutations via GraphQL — contact form keeps using the existing REST `/site/v1/contact` endpoint
+- Auth'd queries — all queries are public read-only
