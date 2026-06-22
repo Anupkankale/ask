@@ -162,11 +162,14 @@ export const listPosts = createServerFn({ method: "GET" }).handler(async () => {
 export const getPostBySlug = createServerFn({ method: "GET" })
   .inputValidator(slugSchema)
   .handler(async ({ data }) => {
-    const gql = await tryGraphQL(async () => {
-      const res = await gqlFetch<{ post: GqlBaseNode | null }>(POST_BY_SLUG_QUERY, { slug: data.slug });
-      return res.post ? mapPost(res.post) : null;
-    });
-    if (gql !== null) return gql;
+    if (isWPGraphQLConfigured()) {
+      try {
+        const res = await gqlFetch<{ post: GqlBaseNode | null }>(POST_BY_SLUG_QUERY, { slug: data.slug });
+        return res.post ? mapPost(res.post) : null;
+      } catch (err) {
+        console.error("[wp/graphql] post-by-slug failed, falling back to REST:", err);
+      }
+    }
     const results = await safeList<WPPost>("/wp/v2/posts", {
       slug: data.slug,
       _embed: "wp:featuredmedia,author,wp:term",
