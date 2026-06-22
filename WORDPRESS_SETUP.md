@@ -204,3 +204,63 @@ Add it under **Lovable → Project Settings → Secrets** (or in a local
 - Replace `Access-Control-Allow-Origin: *` with your actual frontend origin.
 - The contact endpoint already has a per-IP rate limit + length check; add a
   Cloudflare Turnstile / reCAPTCHA token check if you get spam.
+
+---
+
+## Optional: Enable GraphQL (WPGraphQL)
+
+If you'd rather query WordPress with GraphQL instead of REST, install the
+free **WPGraphQL** plugin. The frontend automatically prefers GraphQL when
+`WP_GRAPHQL_URL` is set and silently falls back to REST otherwise — you can
+turn it on or off with a single env var, no code changes.
+
+### 1. Install free plugins
+
+- **WPGraphQL** — https://wordpress.org/plugins/wp-graphql/
+- **WPGraphQL for Custom Post Type UI** — exposes the `project` and
+  `service` CPTs you already created to the GraphQL schema with one click
+  (in CPT UI, edit each CPT and set **Show in GraphQL = true**, GraphQL
+  Single Name = `Project` / `Service`, Plural = `Projects` / `Services`).
+
+### 2. Expose meta fields on the GraphQL schema
+
+WPGraphQL doesn't ship native post meta as queryable fields out of the box.
+Paste this snippet alongside the one above in `functions.php` to add a
+generic `metaValue(key:)` field on every CPT we use:
+
+```php
+add_action('graphql_register_types', function () {
+  $types = ['Post', 'Project', 'Service', 'Page'];
+  foreach ($types as $type) {
+    register_graphql_field($type, 'metaValue', [
+      'type'    => 'String',
+      'args'    => ['key' => ['type' => ['non_null' => 'String']]],
+      'resolve' => function ($post, $args) {
+        $v = get_post_meta($post->databaseId, $args['key'], true);
+        return is_scalar($v) ? (string) $v : null;
+      },
+    ]);
+  }
+});
+```
+
+### 3. Confirm the endpoint
+
+Default URL is `https://yoursite.com/graphql`. Test with:
+
+```bash
+curl -X POST https://yoursite.com/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query":"{ posts(first:3){ nodes{ slug title } } }"}'
+```
+
+### 4. Set the env var
+
+Add to your hosting environment (or Lovable Project Settings → Secrets):
+
+| Variable | Example |
+| --- | --- |
+| `WP_GRAPHQL_URL` | `https://yoursite.com/graphql` |
+
+That's it — the frontend will start using GraphQL on the next request. Unset
+the variable to switch back to REST.
