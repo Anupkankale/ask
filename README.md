@@ -93,6 +93,7 @@ functionality (blog, projects, services, contact form), set these in a
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `WP_API_URL` | yes | Base URL of your WP REST API, e.g. `https://yoursite.com/wp-json` |
+| `WP_GRAPHQL_URL` | optional | If set (e.g. `https://yoursite.com/graphql`), the app queries WordPress via the free **WPGraphQL** plugin instead of REST. Leave unset to keep using REST. |
 
 That's the only secret needed. No WordPress username/password — the contact
 form posts to a public custom REST endpoint defined in `functions.php`
