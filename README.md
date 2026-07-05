@@ -1,7 +1,6 @@
 # Anup Kankale — Personal Portfolio
 
 > Freelance WordPress Developer & AI Integration Specialist  
-> Live site: [anupkankale.lovable.app](https://anupkankale.lovable.app)
 
 A fast, modern portfolio website built with **TanStack Start**, **React 19**, **Tailwind CSS v4**, and **shadcn/ui**. Designed to showcase services, projects, blog posts, and make it easy for potential clients to get in touch.
 
@@ -184,13 +183,4 @@ The preview server also starts on `http://localhost:8080` (or the next available
 - **SEO** — Semantic HTML, meta tags, Open Graph, dynamic `sitemap.xml`
 - **Graceful fallbacks** — Site renders cleanly even before WP is connected
 
----
 
-## License
-
-This project is personal and proprietary. All rights reserved.
-
----
-
-**Built with care by Anup Kankale.**  
-Want to work together? [Get in touch](https://anupkankale.lovable.app/contact).
