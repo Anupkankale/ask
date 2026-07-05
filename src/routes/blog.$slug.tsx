@@ -22,8 +22,8 @@ export const Route = createFileRoute("/blog/$slug")({
     const fallbackTitle = params.slug.replace(/-/g, " ");
     return {
       meta: [
-        { title: `${fallbackTitle} — Anup Kankale` },
-        { property: "og:title", content: `${fallbackTitle} — Anup Kankale` },
+        { title: `${fallbackTitle} | Anup Kankale` },
+        { property: "og:title", content: `${fallbackTitle} | Anup Kankale` },
       ],
     };
   },

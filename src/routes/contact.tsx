@@ -8,9 +8,9 @@ import { PageHero } from "../components/page-hero";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Anup Kankale" },
+      { title: "Contact | Anup Kankale" },
       { name: "description", content: "Get in touch with Anup Kankale for WordPress development, custom plugins or AI integration projects." },
-      { property: "og:title", content: "Contact — Anup Kankale" },
+      { property: "og:title", content: "Contact | Anup Kankale" },
       { property: "og:description", content: "Get in touch about WordPress, plugins or AI projects." },
     ],
   }),
@@ -183,7 +183,7 @@ function Contact() {
               {status === "submitting" ? "Sending…" : "Send message →"}
             </button>
             {status === "success" && (
-              <p className="text-sm text-accent">Thanks — your message is on its way.</p>
+              <p className="text-sm text-accent">Thanks! Your message is on its way.</p>
             )}
             {status === "error" && (
               <p className="text-sm text-red-500">{errorMessage}</p>

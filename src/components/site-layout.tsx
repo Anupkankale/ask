@@ -72,7 +72,7 @@ export function SiteFooter() {
         <div>
           <p className="font-display text-xl text-primary">ANUP KANKALE.</p>
           <p className="mt-2 text-sm text-muted-foreground max-w-xs">
-            Freelance WordPress development, custom plugins and AI-powered web experiences — built from Mumbai, shipped worldwide.
+            Freelance WordPress development, custom plugins and AI-powered web experiences built from Mumbai and shipped worldwide.
           </p>
         </div>
         <div>

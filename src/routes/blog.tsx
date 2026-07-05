@@ -13,9 +13,9 @@ const postsQueryOptions = queryOptions({
 export const Route = createFileRoute("/blog")({
   head: () => ({
     meta: [
-      { title: "Blog — Anup Kankale" },
+      { title: "Blog | Anup Kankale" },
       { name: "description", content: "Notes on WordPress, open source contributions, AI integrations and freelance dev life." },
-      { property: "og:title", content: "Blog — Anup Kankale" },
+      { property: "og:title", content: "Blog | Anup Kankale" },
       { property: "og:description", content: "Notes on WordPress, open source and AI." },
     ],
   }),

@@ -13,9 +13,9 @@ const projectsQueryOptions = queryOptions({
 export const Route = createFileRoute("/projects")({
   head: () => ({
     meta: [
-      { title: "Projects — Anup Kankale" },
+      { title: "Projects | Anup Kankale" },
       { name: "description", content: "Selected WordPress, plugin and AI integration projects shipped by Anup Kankale." },
-      { property: "og:title", content: "Projects — Anup Kankale" },
+      { property: "og:title", content: "Projects | Anup Kankale" },
       { property: "og:description", content: "Selected WordPress, plugin and AI integration projects." },
     ],
   }),
@@ -39,7 +39,7 @@ const fallbackProjects = [
   {
     tag: "CUSTOM PLUGIN",
     title: "Business automation plugin suite",
-    body: "Built a plugin family for lead capture, workflow management and reporting — eliminating hours of manual ops every week.",
+    body: "Built a plugin family for lead capture, workflow management and reporting, eliminating hours of manual ops every week.",
   },
   {
     tag: "OPEN SOURCE",
@@ -49,7 +49,7 @@ const fallbackProjects = [
   {
     tag: "AUTOMATION",
     title: "n8n workflow stack for SMB",
-    body: "End-to-end automation between WordPress forms, CRM, email and Slack — replacing a tangled mess of Zaps and spreadsheets.",
+    body: "End-to-end automation between WordPress forms, CRM, email and Slack, replacing a tangled mess of Zaps and spreadsheets.",
   },
   {
     tag: "PERFORMANCE",
