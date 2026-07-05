@@ -3,11 +3,15 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { getPostBySlug } from "../lib/wp/content.functions";
 import { getFeaturedImage, getMetaImage, plainText } from "../lib/wp/types";
+import { findDummyPost } from "../lib/wp/dummy-posts";
 
 const postQueryOptions = (slug: string) =>
   queryOptions({
     queryKey: ["wp", "post", slug],
-    queryFn: () => getPostBySlug({ data: { slug } }),
+    queryFn: async () => {
+      const post = await getPostBySlug({ data: { slug } });
+      return post ?? findDummyPost(slug);
+    },
     staleTime: 60_000,
   });
 

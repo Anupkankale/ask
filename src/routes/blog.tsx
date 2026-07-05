@@ -3,6 +3,7 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
 import { listPosts } from "../lib/wp/content.functions";
 import { getFeaturedImage, getMetaImage, plainText } from "../lib/wp/types";
+import { DUMMY_POSTS } from "../lib/wp/dummy-posts";
 
 const postsQueryOptions = queryOptions({
   queryKey: ["wp", "posts"],
@@ -38,7 +39,9 @@ function formatDate(value: string) {
 }
 
 function Blog() {
-  const { data: posts } = useSuspenseQuery(postsQueryOptions);
+  const { data: fetched } = useSuspenseQuery(postsQueryOptions);
+  const posts = fetched.length > 0 ? fetched : DUMMY_POSTS;
+  const isDummy = fetched.length === 0;
 
   return (
     <>
@@ -48,16 +51,12 @@ function Blog() {
         lead="A slow blog. I write roughly every couple of weeks about things I actually use at work."
       />
       <section className="mx-auto max-w-3xl px-6 py-20 space-y-6">
-        {posts.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center">
-            <p className="font-display text-xs tracking-widest text-accent">COMING SOON</p>
-            <h2 className="mt-3 text-xl text-primary">No posts published yet</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              The blog is connected to a headless WordPress backend. Once posts go live there, they will appear here automatically.
-            </p>
-          </div>
-        ) : (
-          posts.map((post) => {
+        {isDummy ? (
+          <p className="text-center font-display text-xs tracking-widest text-accent">
+            SAMPLE POSTS · SHOWN UNTIL WORDPRESS IS CONNECTED
+          </p>
+        ) : null}
+        {posts.map((post) => {
             const cover = getMetaImage(post.meta?.cover_image) ?? getFeaturedImage(post);
             const excerpt = post.meta?.excerpt_custom || plainText(post.excerpt.rendered, 220);
             return (
@@ -86,8 +85,7 @@ function Blog() {
                 <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{excerpt}</p>
               </Link>
             );
-          })
-        )}
+          })}
       </section>
     </>
   );
