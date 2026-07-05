@@ -18,7 +18,7 @@ const services = [
   { title: "Custom Plugins", body: "Purpose-built plugins, Gutenberg blocks and REST API endpoints tailored to your business logic." },
   { title: "AI Integrations", body: "Chatbots, content assistants and LLM features that plug straight into your existing stack." },
   { title: "Automation Workflows", body: "n8n and API-based automations that quietly remove the busywork from your day." },
-  { title: "Performance Optimization", body: "Core Web Vitals, caching, image strategy — make your WordPress site genuinely fast." },
+  { title: "Performance Optimization", body: "Core Web Vitals, caching, image strategy: make your WordPress site genuinely fast." },
   { title: "Maintenance & Support", body: "Reliable updates, monitoring and a developer on call when something breaks." },
 ];
 
