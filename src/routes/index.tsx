@@ -4,10 +4,10 @@ import anupHero from "../assets/anup-hero.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Anup Kankale — WordPress Developer & AI Integration Specialist" },
+      { title: "Anup Kankale | WordPress Developer & AI Integration Specialist" },
       { name: "description", content: "Freelance WordPress development, custom plugins and AI integrations. Building powerful web experiences from Mumbai, India." },
-      { property: "og:title", content: "Anup Kankale — WordPress & AI Developer" },
-      { property: "og:description", content: "Freelance WordPress development, custom plugins and AI integrations — no matter your requirements." },
+      { property: "og:title", content: "Anup Kankale | WordPress & AI Developer" },
+      { property: "og:description", content: "Freelance WordPress development, custom plugins and AI integrations for any requirements." },
     ],
   }),
   component: Home,
@@ -18,7 +18,7 @@ const services = [
   { title: "Custom Plugins", body: "Purpose-built plugins, Gutenberg blocks and REST API endpoints tailored to your business logic." },
   { title: "AI Integrations", body: "Chatbots, content assistants and LLM features that plug straight into your existing stack." },
   { title: "Automation Workflows", body: "n8n and API-based automations that quietly remove the busywork from your day." },
-  { title: "Performance Optimization", body: "Core Web Vitals, caching, image strategy — make your WordPress site genuinely fast." },
+  { title: "Performance Optimization", body: "Core Web Vitals, caching, image strategy: make your WordPress site genuinely fast." },
   { title: "Maintenance & Support", body: "Reliable updates, monitoring and a developer on call when something breaks." },
 ];
 
@@ -41,7 +41,7 @@ function Home() {
             <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
               My name is <strong className="text-primary">Anup Kankale</strong>, and I&apos;m a WordPress Developer,
               Open Source Contributor and AI enthusiast. I help businesses, startups and individuals build
-              modern websites, automate workflows and create powerful digital experiences — whether
+              modern websites, automate workflows and create powerful digital experiences, whether
               you&apos;re launching something new or improving what you already have.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
