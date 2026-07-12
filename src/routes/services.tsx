@@ -14,7 +14,7 @@ export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
       { title: "Services | WordPress, AI & Automation | Anup Kankale" },
-      { name: "description", content: "WordPress development, custom plugins, AI integrations, n8n automation workflows, performance optimization and ongoing maintenance." },
+      { name: "description", content: "WordPress development, custom plugins, AI integrations, automation workflows, performance optimization and ongoing maintenance." },
       { property: "og:title", content: "Services | Anup Kankale" },
       { property: "og:description", content: "WordPress development, custom plugins, AI integrations and automation workflows." },
     ],
@@ -49,7 +49,7 @@ const fallbackGroups = [
     items: [
       "AI chatbots embedded in WordPress",
       "LLM-powered content & search features",
-      "n8n workflows for ops and marketing",
+      "Automation workflows for ops and marketing",
       "Internal tools to reduce repetitive work",
     ],
   },
@@ -95,7 +95,7 @@ function Services() {
       />
       <section className="mx-auto max-w-6xl px-6 py-20 grid gap-8 md:grid-cols-2">
         {groups.map((g) => (
-          <div key={g.id} className="rounded-2xl border border-border bg-card p-8">
+          <div key={g.id} className="rounded-3xl bg-card p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_18px_50px_-20px_rgba(0,0,0,0.22)]">
             {g.isHtml ? (
               <h2 className="text-2xl text-primary" dangerouslySetInnerHTML={{ __html: g.title }} />
             ) : (

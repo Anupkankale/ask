@@ -64,7 +64,7 @@ function Blog() {
                 key={post.id}
                 to="/blog/$slug"
                 params={{ slug: post.slug }}
-                className="block rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-0.5 hover:border-accent"
+                className="block rounded-3xl bg-card p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_18px_50px_-20px_rgba(0,0,0,0.22)]"
               >
                 <p className="font-display text-xs tracking-widest text-accent">
                   {formatDate(post.date)}

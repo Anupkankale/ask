@@ -13,6 +13,14 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader, SiteFooter } from "../components/site-layout";
 
+// Update this to your live domain once deployed — it builds the absolute URLs
+// used for canonical, Open Graph and Twitter card images.
+const SITE_URL = "https://anupkankale.com";
+const OG_IMAGE = `${SITE_URL}/anup-wordcamp.jpg`;
+const SITE_TITLE = "Anup Kankale — WordPress & PHP Developer | Frontend & AI";
+const SITE_DESCRIPTION =
+  "Anup Kankale is a WordPress & PHP developer and frontend specialist from Mumbai, building responsive websites, custom plugins and themes, and AI-powered automations.";
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -78,29 +86,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Anup Kankale | WordPress Developer & AI Integration Specialist" },
-      { name: "description", content: "Anup Kankale builds fast WordPress websites, custom plugins and AI-powered automations. WordPress Core contributor from Mumbai, India." },
+      { title: SITE_TITLE },
+      { name: "description", content: SITE_DESCRIPTION },
       { name: "author", content: "Anup Kankale" },
-      { property: "og:title", content: "Anup Kankale | WordPress Developer & AI Integration Specialist" },
-      { property: "og:description", content: "Anup Kankale builds fast WordPress websites, custom plugins and AI-powered automations. WordPress Core contributor from Mumbai, India." },
+      { name: "keywords", content: "Anup Kankale, WordPress developer, PHP developer, frontend developer, Vue.js, Nuxt.js, AI integration, automation, WordPress plugin developer, custom themes, Mumbai" },
+      { name: "robots", content: "index, follow" },
+      { name: "theme-color", content: "#0071e3" },
+      // Open Graph
+      { property: "og:site_name", content: "Anup Kankale" },
+      { property: "og:title", content: SITE_TITLE },
+      { property: "og:description", content: SITE_DESCRIPTION },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Anup Kankale | WordPress Developer & AI Integration Specialist" },
-      { name: "twitter:description", content: "Anup Kankale builds fast WordPress websites, custom plugins and AI-powered automations. WordPress Core contributor from Mumbai, India." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/399dad85-1d41-41f3-b3e0-6c250ee5c8fe/id-preview-f3097db2--2ef4790a-ae46-4cfe-add8-c43513b5ad2a.lovable.app-1781418172995.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/399dad85-1d41-41f3-b3e0-6c250ee5c8fe/id-preview-f3097db2--2ef4790a-ae46-4cfe-add8-c43513b5ad2a.lovable.app-1781418172995.png" },
+      { property: "og:url", content: SITE_URL },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:alt", content: "Anup Kankale speaking at WordCamp Asia 2026" },
+      // Twitter
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: SITE_TITLE },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap",
-      },
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "apple-touch-icon", href: "/favicon.png" },
+      { rel: "manifest", href: "/site.webmanifest" },
+      { rel: "canonical", href: SITE_URL },
     ],
   }),
   shellComponent: RootShell,

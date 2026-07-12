@@ -5,9 +5,9 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About | Anup Kankale" },
-      { name: "description", content: "WordPress Core contributor and AI-focused developer based in Mumbai. Learn about my background, values and how I work." },
+      { name: "description", content: "WordPress & PHP developer and frontend specialist based in Mumbai. Learn about my background, skills and how I work." },
       { property: "og:title", content: "About Anup Kankale" },
-      { property: "og:description", content: "WordPress Core contributor and AI-focused developer based in Mumbai." },
+      { property: "og:description", content: "WordPress & PHP developer and frontend specialist based in Mumbai." },
     ],
   }),
   component: About,
@@ -19,13 +19,13 @@ function About() {
       <PageHero
         eyebrow="ABOUT ME"
         title={<>Hi, I&apos;m Anup, <span className="text-accent">a developer who loves the open web.</span></>}
-        lead="I help businesses build modern WordPress websites and add intelligent, AI-powered features without losing the simplicity that makes WordPress great."
+        lead="A WordPress & PHP developer and frontend specialist from Mumbai, building responsive websites and AI-powered features that feel effortless to use."
       />
       <section className="mx-auto max-w-3xl px-6 py-20 space-y-6 text-lg leading-relaxed text-muted-foreground">
-        <p>I&apos;m based in <strong className="text-primary">Mumbai, India</strong> and have spent the last several years building with WordPress, from small business sites to enterprise platforms with 90+ pages and complex editorial workflows.</p>
-        <p>I&apos;m a proud <strong className="text-primary">WordPress Core contributor</strong>, credited in the WordPress 7.0 release for code and bug fixes. Beyond contributions, I actively participate in the community through WordCamps and open-source projects on GitHub.</p>
-        <p>My current obsession is the intersection of <strong className="text-primary">WordPress and AI</strong>, chatbots, LLM-powered content tools, and n8n automations that quietly take care of repetitive work so teams can focus on the meaningful parts of their job.</p>
-        <p>I believe great websites should be <strong className="text-primary">fast, accessible and easy to manage</strong>. That&apos;s the bar I try to hit on every project, big or small.</p>
+        <p>I&apos;m based in <strong className="text-primary">Mumbai, India</strong> and work as a <strong className="text-primary">WordPress &amp; PHP developer</strong>, currently building at <strong className="text-primary">Devxpertlab</strong> alongside freelance projects. I&apos;m a passionate frontend developer with hands-on experience creating responsive, user-friendly websites and web applications.</p>
+        <p>My day-to-day is a mix of <strong className="text-primary">custom WordPress plugins and themes</strong>, modern frontend work with <strong className="text-primary">Vue.js and Nuxt.js</strong>, and clean PHP. I care about the details that make a site feel effortless: accessible markup, sensible structure and interfaces people actually enjoy.</p>
+        <p>Lately my focus is the intersection of <strong className="text-primary">WordPress and AI</strong>: lightweight chatbots that capture leads, LLM-powered content tools, and <strong className="text-primary">custom automations</strong> that quietly take care of repetitive work so teams can focus on the meaningful parts of their job.</p>
+        <p>I believe great websites should be <strong className="text-primary">fast, findable and easy to manage</strong>. That&apos;s the bar I try to hit on every project, big or small. I work comfortably in English, Hindi and Marathi.</p>
       </section>
 
       <section className="border-t border-border bg-card">
