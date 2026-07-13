@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -17,7 +18,7 @@ import { SiteHeader, SiteFooter } from "../components/site-layout";
 // used for canonical, Open Graph and Twitter card images.
 const SITE_URL = "https://anupkankale.com";
 const OG_IMAGE = `${SITE_URL}/anup-wordcamp.jpg`;
-const SITE_TITLE = "Anup Kankale — WordPress & PHP Developer | Frontend & AI";
+const SITE_TITLE = "Anup Kankale · WordPress & PHP Developer | Frontend & AI";
 const SITE_DESCRIPTION =
   "Anup Kankale is a WordPress & PHP developer and frontend specialist from Mumbai, building responsive websites, custom plugins and themes, and AI-powered automations.";
 
@@ -136,17 +137,26 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  // Standalone pages (e.g. the unlisted /treadstrome) render without the
+  // portfolio's shared header/footer so they read as self-contained.
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const bare = pathname.startsWith("/treadstrome");
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
-        <SiteHeader />
-        <main className="flex-1">
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-        </main>
-        <SiteFooter />
-      </div>
+      {bare ? (
+        // Required: nested routes render here. Removing <Outlet /> breaks all child routes.
+        <Outlet />
+      ) : (
+        <div className="flex min-h-screen flex-col">
+          <SiteHeader />
+          <main className="flex-1">
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </main>
+          <SiteFooter />
+        </div>
+      )}
     </QueryClientProvider>
   );
 }

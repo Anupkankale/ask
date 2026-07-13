@@ -13,6 +13,31 @@ stores submissions as private posts and emails the admin. See
 
 ---
 
+## How to Run This
+
+Get the site running locally in three steps:
+
+```bash
+# 1. Install dependencies (Bun recommended)
+bun install        # or: npm install
+
+# 2. Start the dev server
+bun run dev         # or: npm run dev
+
+# 3. Open the site
+# → http://localhost:8080
+```
+
+That's it — the site runs out of the box with fallback content, **no WordPress
+backend required**. To wire up the live blog, projects, and contact form, add a
+`WP_API_URL` to a `.env` file (see [Environment variables](#3-environment-variables))
+and follow [`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md).
+
+See [Getting Started](#getting-started) below for prerequisites, production
+builds, and troubleshooting.
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |

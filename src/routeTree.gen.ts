@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Treadstromeplanv1RouteImport } from './routes/treadstromeplanv1'
+import { Route as TreadstromeRouteImport } from './routes/treadstrome'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as ProjectsRouteImport } from './routes/projects'
@@ -19,6 +21,16 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 
+const Treadstromeplanv1Route = Treadstromeplanv1RouteImport.update({
+  id: '/treadstromeplanv1',
+  path: '/treadstromeplanv1',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TreadstromeRoute = TreadstromeRouteImport.update({
+  id: '/treadstrome',
+  path: '/treadstrome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -73,6 +85,8 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/treadstrome': typeof TreadstromeRoute
+  '/treadstromeplanv1': typeof Treadstromeplanv1Route
   '/blog/$slug': typeof BlogSlugRoute
   '/api/public/contact': typeof ApiPublicContactRoute
 }
@@ -84,6 +98,8 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/treadstrome': typeof TreadstromeRoute
+  '/treadstromeplanv1': typeof Treadstromeplanv1Route
   '/blog/$slug': typeof BlogSlugRoute
   '/api/public/contact': typeof ApiPublicContactRoute
 }
@@ -96,6 +112,8 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/treadstrome': typeof TreadstromeRoute
+  '/treadstromeplanv1': typeof Treadstromeplanv1Route
   '/blog/$slug': typeof BlogSlugRoute
   '/api/public/contact': typeof ApiPublicContactRoute
 }
@@ -109,6 +127,8 @@ export interface FileRouteTypes {
     | '/projects'
     | '/services'
     | '/sitemap.xml'
+    | '/treadstrome'
+    | '/treadstromeplanv1'
     | '/blog/$slug'
     | '/api/public/contact'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +140,8 @@ export interface FileRouteTypes {
     | '/projects'
     | '/services'
     | '/sitemap.xml'
+    | '/treadstrome'
+    | '/treadstromeplanv1'
     | '/blog/$slug'
     | '/api/public/contact'
   id:
@@ -131,6 +153,8 @@ export interface FileRouteTypes {
     | '/projects'
     | '/services'
     | '/sitemap.xml'
+    | '/treadstrome'
+    | '/treadstromeplanv1'
     | '/blog/$slug'
     | '/api/public/contact'
   fileRoutesById: FileRoutesById
@@ -143,11 +167,27 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TreadstromeRoute: typeof TreadstromeRoute
+  Treadstromeplanv1Route: typeof Treadstromeplanv1Route
   ApiPublicContactRoute: typeof ApiPublicContactRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/treadstromeplanv1': {
+      id: '/treadstromeplanv1'
+      path: '/treadstromeplanv1'
+      fullPath: '/treadstromeplanv1'
+      preLoaderRoute: typeof Treadstromeplanv1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/treadstrome': {
+      id: '/treadstrome'
+      path: '/treadstrome'
+      fullPath: '/treadstrome'
+      preLoaderRoute: typeof TreadstromeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -232,6 +272,8 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TreadstromeRoute: TreadstromeRoute,
+  Treadstromeplanv1Route: Treadstromeplanv1Route,
   ApiPublicContactRoute: ApiPublicContactRoute,
 }
 export const routeTree = rootRouteImport

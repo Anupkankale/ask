@@ -34,6 +34,8 @@ const highlights = [
 
 const btnPrimary =
   "inline-flex items-center justify-center rounded-full bg-accent px-6 py-3 text-[15px] font-medium text-accent-foreground transition hover:opacity-90";
+const btnSecondary =
+  "inline-flex items-center justify-center rounded-full border border-border px-6 py-3 text-[15px] font-medium text-foreground transition hover:border-accent hover:text-accent";
 const btnText =
   "inline-flex items-center gap-1 text-[15px] font-medium text-accent transition hover:underline";
 
@@ -48,19 +50,19 @@ function Home() {
             <span className="h-1.5 w-1.5 rounded-full bg-[oklch(0.72_0.17_150)]" />
             Open to work · Mumbai, India
           </span>
-          <h1 className="mt-7 text-[3.25rem] font-semibold leading-[1.05] tracking-tight text-foreground md:text-[5.25rem]">
-            WordPress, PHP &amp; AI,
+          <h1 className="mt-7 text-[2.75rem] font-semibold leading-[1.05] tracking-tight text-foreground md:text-[4.5rem]">
+            Full-Stack Web Solutions,
             <br />
-            <span className="text-accent">beautifully engineered.</span>
+            <span className="text-accent">no matter your requirements.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-xl leading-relaxed text-muted-foreground md:text-[1.375rem]">
             I&apos;m <span className="text-foreground">Anup Kankale</span>, a WordPress &amp; PHP developer and
-            frontend specialist from Mumbai. I build responsive websites, custom plugins and themes, and
-            AI-powered automations that ship real results.
+            frontend specialist from Mumbai. I build responsive websites, custom plugins and themes, and AI-powered
+            automations that ship real results.
           </p>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
-            <Link to="/projects" className={btnPrimary}>View my work</Link>
-            <Link to="/contact" className={btnText}>Get in touch ›</Link>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+            <Link to="/about" className={btnPrimary}>About Me</Link>
+            <Link to="/contact" className={btnSecondary}>Let&apos;s Talk</Link>
           </div>
         </div>
 
