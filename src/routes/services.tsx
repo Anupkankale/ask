@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
+import { pageHead } from "../lib/seo";
 import { listServices } from "../lib/wp/content.functions";
 import { normaliseStringList, plainText } from "../lib/wp/types";
 
@@ -11,14 +12,13 @@ const servicesQueryOptions = queryOptions({
 });
 
 export const Route = createFileRoute("/services")({
-  head: () => ({
-    meta: [
-      { title: "Services — WordPress, AI & Automation | Anup Kankale" },
-      { name: "description", content: "WordPress development, custom plugins, AI integrations, n8n automation workflows, performance optimization and ongoing maintenance." },
-      { property: "og:title", content: "Services — Anup Kankale" },
-      { property: "og:description", content: "WordPress development, custom plugins, AI integrations and automation workflows." },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Services: WordPress, AI & Automation | Anup Kankale",
+      description:
+        "WordPress development, custom plugins, AI integrations, n8n automation workflows, performance optimization and ongoing maintenance.",
+      path: "/services",
+    }),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(servicesQueryOptions);
   },
@@ -91,7 +91,7 @@ function Services() {
       <PageHero
         eyebrow="SERVICES"
         title={<>How I can <span className="text-accent">help you ship.</span></>}
-        lead="A short menu of the things I do most often. If your project doesn&apos;t quite fit a box, send me a note anyway — most good work doesn&apos;t."
+        lead="A short menu of the things I do most often. If your project doesn&apos;t quite fit a box, send me a note anyway. Most good work doesn&apos;t."
       />
       <section className="mx-auto max-w-6xl px-6 py-20 grid gap-8 md:grid-cols-2">
         {groups.map((g) => (

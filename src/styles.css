@@ -62,6 +62,8 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --font-display: "Archivo Black", system-ui, sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
+  /* Logo only. Kalam is a handwriting face and is not used anywhere else. */
+  --font-logo: "Kalam", "Segoe Print", cursive;
 }
 
 :root {
@@ -153,5 +155,69 @@
     font-family: var(--font-display);
     letter-spacing: -0.02em;
     line-height: 1.05;
+  }
+}
+
+/* --- Logo -------------------------------------------------------------
+ * Kalam is scoped to this one element; it is not used anywhere else on the
+ * site. Plain text, no effects.
+ */
+.logo-mark {
+  font-family: var(--font-logo);
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+/* --- Marquee ------------------------------------------------------------
+ * Two identical tracks sit side by side and both slide left by exactly
+ * their own width, so the second one lands where the first started and the
+ * loop is seamless. Fades at both edges hide the wrap point.
+ */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+.marquee {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6rem, black calc(100% - 6rem), transparent);
+  mask-image: linear-gradient(to right, transparent, black 6rem, black calc(100% - 6rem), transparent);
+}
+
+.marquee-track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2.5rem;
+  padding-right: 2.5rem;
+  min-width: 100%;
+  white-space: nowrap;
+  /* One cycle moves the track its full width, so the perceived speed depends
+   * on how many items it holds. Raise this if more are added. */
+  animation: marquee-scroll 120s linear infinite;
+  will-change: transform;
+}
+
+/* Let visitors stop the strip to actually read it. */
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .marquee-track {
+    animation: none;
+  }
+  /* The duplicate only exists to make the loop seamless. */
+  .marquee-track[aria-hidden="true"] {
+    display: none;
   }
 }

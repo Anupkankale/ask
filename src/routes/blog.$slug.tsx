@@ -1,7 +1,9 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import { pageHead } from "../lib/seo";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { getPostBySlug } from "../lib/wp/content.functions";
+import { findFallbackPost } from "../lib/wp/fallback-posts";
 import { getFeaturedImage, getAcfImage, plainText } from "../lib/wp/types";
 
 const postQueryOptions = (slug: string) =>
@@ -14,18 +16,28 @@ const postQueryOptions = (slug: string) =>
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params, context }) => {
     const post = await context.queryClient.ensureQueryData(postQueryOptions(params.slug));
-    if (!post) throw notFound();
+    if (!post && !findFallbackPost(params.slug)) throw notFound();
   },
   head: ({ loaderData: _loaderData, params }) => {
-    // Loader returns void; we don't have data here. Defer detailed meta to the
-    // component-level fallback. This still emits a sensible title from slug.
-    const fallbackTitle = params.slug.replace(/-/g, " ");
-    return {
-      meta: [
-        { title: `${fallbackTitle} — Anup Kankale` },
-        { property: "og:title", content: `${fallbackTitle} — Anup Kankale` },
-      ],
-    };
+    // The loader returns void, so the post body is not available here. Derive a
+    // readable title from the slug and mark the page as an article so it still
+    // ships a canonical URL and a complete social card.
+    // A known placeholder post carries a real title and excerpt; otherwise fall
+    // back to title-casing the slug, which is all the loader gives us here.
+    const placeholder = findFallbackPost(params.slug);
+    const title =
+      placeholder?.title.rendered ??
+      params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const description =
+      placeholder?.acf?.excerpt_custom ??
+      `${title}: notes on WordPress, open source and AI by Anup Kankale.`;
+
+    return pageHead({
+      title: `${title} | Anup Kankale`,
+      description,
+      path: `/blog/${params.slug}`,
+      type: "article",
+    });
   },
   component: PostPage,
   notFoundComponent: PostNotFound,
@@ -34,7 +46,8 @@ export const Route = createFileRoute("/blog/$slug")({
 
 function PostPage() {
   const { slug } = Route.useParams();
-  const { data: post } = useSuspenseQuery(postQueryOptions(slug));
+  const { data: wpPost } = useSuspenseQuery(postQueryOptions(slug));
+  const post = wpPost ?? findFallbackPost(slug);
   if (!post) return <PostNotFound />;
 
   const cover = getAcfImage(post.acf?.cover_image) ?? getFeaturedImage(post);

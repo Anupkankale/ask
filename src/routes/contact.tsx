@@ -4,21 +4,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { PageHero } from "../components/page-hero";
+import { pageHead } from "../lib/seo";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact — Anup Kankale" },
-      { name: "description", content: "Get in touch with Anup Kankale for WordPress development, custom plugins or AI integration projects." },
-      { property: "og:title", content: "Contact — Anup Kankale" },
-      { property: "og:description", content: "Get in touch about WordPress, plugins or AI projects." },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Contact | Anup Kankale",
+      description:
+        "Get in touch with Anup Kankale for WordPress development, custom plugins or AI integration projects.",
+      path: "/contact",
+    }),
   component: Contact,
 });
 
 const links = [
-  { label: "Email", value: "hello@anupkankale.com", href: "mailto:hello@anupkankale.com" },
+  { label: "Email", value: "anupkankaleak47@gmail.com", href: "mailto:anupkankaleak47@gmail.com" },
   { label: "WordPress.org", value: "profiles.wordpress.org/anupkankale", href: "https://profiles.wordpress.org/anupkankale/" },
   { label: "LinkedIn", value: "in.linkedin.com/in/anupkankale", href: "https://in.linkedin.com/in/anupkankale" },
   { label: "Gravatar", value: "gravatar.com/anupkankale", href: "https://gravatar.com/anupkankale" },
@@ -183,7 +183,7 @@ function Contact() {
               {status === "submitting" ? "Sending…" : "Send message →"}
             </button>
             {status === "success" && (
-              <p className="text-sm text-accent">Thanks — your message is on its way.</p>
+              <p className="text-sm text-accent">Thanks, your message is on its way.</p>
             )}
             {status === "error" && (
               <p className="text-sm text-red-500">{errorMessage}</p>

@@ -85,9 +85,10 @@ export const Route = createFileRoute("/api/public/contact")({
           return json(200, { ok: true, id: created.id });
         } catch (err) {
           if (err instanceof WPNotConfiguredError) {
+            console.error("[contact] WP_API_URL is not configured");
             return json(503, {
               ok: false,
-              error: "Contact form is not connected to a backend yet.",
+              error: "Could not deliver your message. Please try again or email directly.",
             });
           }
           if (err instanceof WPRequestError) {

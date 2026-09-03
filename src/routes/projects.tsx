@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
+import { pageHead } from "../lib/seo";
 import { listProjects } from "../lib/wp/content.functions";
 import { getFeaturedImage, normaliseStringList, plainText } from "../lib/wp/types";
 
@@ -11,14 +12,13 @@ const projectsQueryOptions = queryOptions({
 });
 
 export const Route = createFileRoute("/projects")({
-  head: () => ({
-    meta: [
-      { title: "Projects — Anup Kankale" },
-      { name: "description", content: "Selected WordPress, plugin and AI integration projects shipped by Anup Kankale." },
-      { property: "og:title", content: "Projects — Anup Kankale" },
-      { property: "og:description", content: "Selected WordPress, plugin and AI integration projects." },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Projects | Anup Kankale",
+      description:
+        "Selected WordPress, plugin and AI integration projects shipped by Anup Kankale.",
+      path: "/projects",
+    }),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(projectsQueryOptions);
   },
@@ -39,7 +39,7 @@ const fallbackProjects = [
   {
     tag: "CUSTOM PLUGIN",
     title: "Business automation plugin suite",
-    body: "Built a plugin family for lead capture, workflow management and reporting — eliminating hours of manual ops every week.",
+    body: "Built a plugin family for lead capture, workflow management and reporting, eliminating hours of manual ops every week.",
   },
   {
     tag: "OPEN SOURCE",
@@ -49,7 +49,7 @@ const fallbackProjects = [
   {
     tag: "AUTOMATION",
     title: "n8n workflow stack for SMB",
-    body: "End-to-end automation between WordPress forms, CRM, email and Slack — replacing a tangled mess of Zaps and spreadsheets.",
+    body: "End-to-end automation between WordPress forms, CRM, email and Slack, replacing a tangled mess of Zaps and spreadsheets.",
   },
   {
     tag: "PERFORMANCE",

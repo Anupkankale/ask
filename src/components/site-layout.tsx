@@ -15,12 +15,8 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link to="/" className="flex items-center gap-3 group">
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-primary text-primary-foreground font-display text-lg">AK</span>
-          <span className="flex flex-col leading-tight">
-            <span className="font-display text-base text-primary">ANUP KANKALE.</span>
-            <span className="text-[10px] tracking-[0.25em] text-accent font-semibold">MUMBAI · WORDPRESS · AI</span>
-          </span>
+        <Link to="/" className="group">
+          <span className="logo-mark text-primary">Anup Kankale</span>
         </Link>
         <nav className="hidden md:flex items-center gap-7 text-sm font-medium">
           {nav.map((n) => (
@@ -72,7 +68,7 @@ export function SiteFooter() {
         <div>
           <p className="font-display text-xl text-primary">ANUP KANKALE.</p>
           <p className="mt-2 text-sm text-muted-foreground max-w-xs">
-            Freelance WordPress development, custom plugins and AI-powered web experiences — built from Mumbai, shipped worldwide.
+            Freelance WordPress development, custom plugins and AI-powered web experiences, built from Mumbai and shipped worldwide.
           </p>
         </div>
         <div>
@@ -91,7 +87,7 @@ export function SiteFooter() {
             <li><a className="hover:text-accent" href="https://profiles.wordpress.org/anupkankale/" target="_blank" rel="noreferrer">WordPress.org profile</a></li>
             <li><a className="hover:text-accent" href="https://in.linkedin.com/in/anupkankale" target="_blank" rel="noreferrer">LinkedIn</a></li>
             <li><a className="hover:text-accent" href="https://gravatar.com/anupkankale" target="_blank" rel="noreferrer">Gravatar</a></li>
-            <li><a className="hover:text-accent" href="mailto:hello@anupkankale.com">hello@anupkankale.com</a></li>
+            <li><a className="hover:text-accent" href="mailto:anupkankaleak47@gmail.com">anupkankaleak47@gmail.com</a></li>
           </ul>
         </div>
       </div>
