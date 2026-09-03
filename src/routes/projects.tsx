@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
-import { pageHead } from "../lib/seo";
 import { listProjects } from "../lib/wp/content.functions";
 import { getFeaturedImage, normaliseStringList, plainText } from "../lib/wp/types";
 
@@ -12,13 +11,14 @@ const projectsQueryOptions = queryOptions({
 });
 
 export const Route = createFileRoute("/projects")({
-  head: () =>
-    pageHead({
-      title: "Projects | Anup Kankale",
-      description:
-        "Selected WordPress, plugin and AI integration projects shipped by Anup Kankale.",
-      path: "/projects",
-    }),
+  head: () => ({
+    meta: [
+      { title: "Projects | Anup Kankale" },
+      { name: "description", content: "Selected WordPress, plugin and AI integration projects shipped by Anup Kankale." },
+      { property: "og:title", content: "Projects | Anup Kankale" },
+      { property: "og:description", content: "Selected WordPress, plugin and AI integration projects." },
+    ],
+  }),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(projectsQueryOptions);
   },
@@ -27,34 +27,28 @@ export const Route = createFileRoute("/projects")({
 
 const fallbackProjects = [
   {
-    tag: "ENTERPRISE WORDPRESS",
-    title: "90+ page corporate website",
-    body: "Designed and built a large-scale WordPress site with custom Gutenberg blocks, multilingual content and a workflow editors actually enjoy using.",
+    tag: "WORDPRESS PLUGIN",
+    title: "Chatbot for WordPress",
+    body: "A free, lightweight WordPress chatbot plugin that engages visitors, captures leads and stores customer information directly in your WordPress database.",
+    repoUrl: "https://github.com/Anupkankale/chatbot",
   },
   {
-    tag: "AI INTEGRATION",
-    title: "AI chatbot embedded into WordPress",
-    body: "Connected an LLM-powered assistant to a content-heavy WordPress site, with role-aware answers and full conversation logging.",
+    tag: "AI AUTOMATION",
+    title: "WordPress automation with n8n",
+    body: "An end-to-end AI content pipeline that generates and publishes SEO-optimized content to WordPress automatically using n8n workflows.",
+    repoUrl: "https://github.com/Anupkankale/wp-automation-with-n8n",
   },
   {
-    tag: "CUSTOM PLUGIN",
-    title: "Business automation plugin suite",
-    body: "Built a plugin family for lead capture, workflow management and reporting, eliminating hours of manual ops every week.",
+    tag: "WORDPRESS THEME",
+    title: "Aquila theme",
+    body: "A custom WordPress theme development project: clean, responsive and built with maintainable, standards-friendly code.",
+    repoUrl: "https://github.com/Anupkankale/Aquila",
   },
   {
-    tag: "OPEN SOURCE",
-    title: "WordPress Core contributions",
-    body: "Code, bug fixes and testing for the WordPress project, credited in the 7.0 release and ongoing dev cycles.",
-  },
-  {
-    tag: "AUTOMATION",
-    title: "n8n workflow stack for SMB",
-    body: "End-to-end automation between WordPress forms, CRM, email and Slack, replacing a tangled mess of Zaps and spreadsheets.",
-  },
-  {
-    tag: "PERFORMANCE",
-    title: "Core Web Vitals turnaround",
-    body: "Took a struggling WordPress site from failing CWV to all-green with caching, image strategy and a leaner theme.",
+    tag: "PHP",
+    title: "B2B platform",
+    body: "A PHP-based project exploring B2B workflows: server-side logic, data handling and a practical, no-nonsense interface.",
+    repoUrl: "https://github.com/Anupkankale/b2b",
   },
 ];
 
@@ -65,16 +59,16 @@ function Projects() {
     wpProjects.length > 0
       ? wpProjects.map((p) => {
           const cover = getFeaturedImage(p);
-          const tech = normaliseStringList(p.acf?.tech_stack);
+          const tech = normaliseStringList(p.meta?.tech_stack);
           return {
             id: String(p.id),
-            tag: (p.acf?.tag || p.acf?.role || "PROJECT").toString().toUpperCase(),
+            tag: (p.meta?.tag || p.meta?.role || "PROJECT").toString().toUpperCase(),
             title: p.title.rendered,
             body: plainText(p.excerpt.rendered, 220) || plainText(p.content.rendered, 220),
             cover,
             tech,
-            liveUrl: p.acf?.live_url,
-            repoUrl: p.acf?.repo_url,
+            liveUrl: p.meta?.live_url,
+            repoUrl: p.meta?.repo_url,
             isHtml: true,
           };
         })
@@ -86,7 +80,7 @@ function Projects() {
           cover: null as string | null,
           tech: [] as string[],
           liveUrl: undefined as string | undefined,
-          repoUrl: undefined as string | undefined,
+          repoUrl: p.repoUrl as string | undefined,
           isHtml: false,
         }));
 
@@ -99,7 +93,7 @@ function Projects() {
       />
       <section className="mx-auto max-w-6xl px-6 py-20 grid gap-6 md:grid-cols-2">
         {items.map((p) => (
-          <article key={p.id} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 transition hover:-translate-y-1 hover:border-accent">
+          <article key={p.id} className="group relative overflow-hidden rounded-3xl bg-card p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_18px_50px_-20px_rgba(0,0,0,0.22)]">
             <p className="font-display text-xs tracking-widest text-accent">{p.tag}</p>
             {p.isHtml ? (
               <h2 className="mt-3 text-2xl text-primary" dangerouslySetInnerHTML={{ __html: p.title }} />

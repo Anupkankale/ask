@@ -2,11 +2,12 @@ import type { ReactNode } from "react";
 
 export function PageHero({ eyebrow, title, lead }: { eyebrow: string; title: ReactNode; lead?: ReactNode }) {
   return (
-    <section className="border-b border-border bg-[oklch(0.97_0.02_80)]">
-      <div className="mx-auto max-w-6xl px-6 py-20">
-        <p className="font-display text-sm tracking-widest text-accent">{eyebrow}</p>
-        <h1 className="mt-3 max-w-3xl text-4xl text-primary md:text-6xl">{title}</h1>
-        {lead && <p className="mt-5 max-w-2xl text-lg text-muted-foreground leading-relaxed">{lead}</p>}
+    <section className="relative isolate overflow-hidden border-b border-border">
+      <div className="pointer-events-none absolute inset-0 -z-10 hero-wash" />
+      <div className="mx-auto max-w-3xl px-6 py-24 text-center md:py-32">
+        <p className="text-sm font-semibold tracking-tight text-accent">{eyebrow}</p>
+        <h1 className="mt-3 text-[2.75rem] font-semibold leading-[1.06] tracking-tight text-foreground md:text-6xl">{title}</h1>
+        {lead && <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">{lead}</p>}
       </div>
     </section>
   );

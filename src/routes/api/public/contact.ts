@@ -1,7 +1,8 @@
-// Public POST endpoint for the contact form. Validates input, then writes
-// a private `contact_submission` custom post to WordPress using an
-// Application Password. Email notifications will be added once Lovable
-// Cloud + an email domain are configured.
+// Public POST endpoint for the contact form. Validates input, then forwards
+// to a custom WordPress REST endpoint (`/wp-json/site/v1/contact`) defined
+// in the WP theme's functions.php. The WP endpoint stores submissions as
+// private `contact_submission` posts — no Application Password / paid plugin
+// required.
 
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
@@ -64,21 +65,15 @@ export const Route = createFileRoute("/api/public/contact")({
         if (website) return json(200, { ok: true });
 
         try {
-          const created = await wpFetch<{ id: number; link: string }>({
-            path: "/wp/v2/contact_submission",
+          const created = await wpFetch<{ id: number }>({
+            path: "/site/v1/contact",
             method: "POST",
-            authenticated: true,
             body: {
-              title: `Message from ${name}`,
-              status: "private",
-              content: message,
-              acf: {
-                email,
-                phone: phone || "",
-                message,
-                source_page: source_page || "",
-                submitted_at: new Date().toISOString(),
-              },
+              name,
+              email,
+              phone: phone || "",
+              message,
+              source_page: source_page || "",
             },
           });
 

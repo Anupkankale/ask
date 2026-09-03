@@ -11,8 +11,6 @@ export interface WPFetchOptions {
   query?: Record<string, string | number | boolean | undefined>;
   method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: unknown;
-  // Use Application Password credentials (write endpoints)
-  authenticated?: boolean;
   // ms; default 8000
   timeoutMs?: number;
 }
@@ -41,13 +39,6 @@ function getBaseUrl(): string | null {
   return raw.replace(/\/+$/, "");
 }
 
-function buildAuthHeader(): string | null {
-  const user = process.env.WP_APP_USER?.trim();
-  const pass = process.env.WP_APP_PASSWORD?.trim();
-  if (!user || !pass) return null;
-  return `Basic ${btoa(`${user}:${pass}`)}`;
-}
-
 export async function wpFetch<T>(opts: WPFetchOptions): Promise<T> {
   const base = getBaseUrl();
   if (!base) throw new WPNotConfiguredError();
@@ -62,14 +53,6 @@ export async function wpFetch<T>(opts: WPFetchOptions): Promise<T> {
 
   const headers: Record<string, string> = { Accept: "application/json" };
   if (opts.body !== undefined) headers["Content-Type"] = "application/json";
-
-  if (opts.authenticated) {
-    const auth = buildAuthHeader();
-    if (!auth) {
-      throw new Error("WP_APP_USER and WP_APP_PASSWORD must be set for authenticated requests");
-    }
-    headers["Authorization"] = auth;
-  }
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? 8000);

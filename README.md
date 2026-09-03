@@ -1,15 +1,40 @@
 # Anup Kankale — Personal Portfolio
 
 > Freelance WordPress Developer & AI Integration Specialist  
-> Live site: [anupkankale.lovable.app](https://anupkankale.lovable.app)
 
 A fast, modern portfolio website built with **TanStack Start**, **React 19**, **Tailwind CSS v4**, and **shadcn/ui**. Designed to showcase services, projects, blog posts, and make it easy for potential clients to get in touch.
 
 The site runs as a **headless frontend** powered by a self-hosted WordPress
-backend (REST API + ACF). Content for the blog, projects, and services is
-edited in WP and fetched server-side. The contact form posts back to WP as
-private submissions. See [`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md) for the
-one-time WP setup steps.
+backend (core REST API + native post meta — **no paid plugins**). Content
+for the blog, projects, and services is edited in WP and fetched
+server-side. The contact form posts to a custom public REST endpoint that
+stores submissions as private posts and emails the admin. See
+[`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md) for the one-time WP setup.
+
+---
+
+## How to Run This
+
+Get the site running locally in three steps:
+
+```bash
+# 1. Install dependencies (Bun recommended)
+bun install        # or: npm install
+
+# 2. Start the dev server
+bun run dev         # or: npm run dev
+
+# 3. Open the site
+# → http://localhost:8080
+```
+
+That's it — the site runs out of the box with fallback content, **no WordPress
+backend required**. To wire up the live blog, projects, and contact form, add a
+`WP_API_URL` to a `.env` file (see [Environment variables](#3-environment-variables))
+and follow [`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md).
+
+See [Getting Started](#getting-started) below for prerequisites, production
+builds, and troubleshooting.
 
 ---
 
@@ -27,7 +52,7 @@ one-time WP setup steps.
 | Carousel | Embla Carousel |
 | Build Tool | Vite 7 |
 | Package Manager | Bun |
-| Backend (CMS) | Headless WordPress + ACF + REST API |
+| Backend (CMS) | Headless WordPress (core REST API + native meta, free plugins only) |
 
 ---
 
@@ -92,8 +117,11 @@ functionality (blog, projects, services, contact form), set these in a
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `WP_API_URL` | yes | Base URL of your WP REST API, e.g. `https://yoursite.com/wp-json` |
-| `WP_APP_USER` | for contact form | Your WordPress username |
-| `WP_APP_PASSWORD` | for contact form | An Application Password (Users → Profile → Application Passwords) |
+| `WP_GRAPHQL_URL` | optional | If set (e.g. `https://yoursite.com/graphql`), the app queries WordPress via the free **WPGraphQL** plugin instead of REST. Leave unset to keep using REST. |
+
+That's the only secret needed. No WordPress username/password — the contact
+form posts to a public custom REST endpoint defined in `functions.php`
+(with honeypot, per-IP rate limit, and admin email notification).
 
 Without `WP_API_URL`, the site still runs — blog/projects/services show
 fallback content and the contact form returns a friendly "backend not
@@ -173,20 +201,11 @@ The preview server also starts on `http://localhost:8080` (or the next available
 
 ## Key Features
 
-- **Headless WordPress backend** — Blog, Projects, and Services are managed in WP and exposed via REST + ACF
+- **Headless WordPress backend (100% free)** — Blog, Projects, and Services are managed in WP and exposed via the core REST API + native post meta
 - **Dynamic blog** — List + single-post pages (`/blog`, `/blog/$slug`) with featured images and ACF fields
-- **Projects & Services** — Custom Post Types in WP with rich ACF fields (tech stack, gallery, features, pricing)
-- **Contact form** — React Hook Form + Zod, server-side validation, saves submissions to WP as private posts, honeypot anti-spam
+- **Projects & Services** — Custom Post Types in WP with simple meta fields (tech stack, gallery, features, pricing)
+- **Contact form** — React Hook Form + Zod, server-side validation, saves to WP as a private post via a public custom REST endpoint, honeypot + rate-limit, admin email via `wp_mail()`
 - **SEO** — Semantic HTML, meta tags, Open Graph, dynamic `sitemap.xml`
 - **Graceful fallbacks** — Site renders cleanly even before WP is connected
 
----
 
-## License
-
-This project is personal and proprietary. All rights reserved.
-
----
-
-**Built with care by Anup Kankale.**  
-Want to work together? [Get in touch](https://anupkankale.lovable.app/contact).

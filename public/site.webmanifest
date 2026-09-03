@@ -1,0 +1,10 @@
+{
+  "name": "Anup Kankale — WordPress & PHP Developer",
+  "short_name": "Anup Kankale",
+  "icons": [
+    { "src": "/favicon.png", "type": "image/png", "sizes": "500x500" }
+  ],
+  "theme_color": "#0071e3",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

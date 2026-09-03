@@ -1,10 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
-import { pageHead } from "../lib/seo";
 import { listPosts } from "../lib/wp/content.functions";
-import { fallbackPosts } from "../lib/wp/fallback-posts";
-import { getFeaturedImage, getAcfImage, plainText } from "../lib/wp/types";
+import { getFeaturedImage, getMetaImage, plainText } from "../lib/wp/types";
+import { DUMMY_POSTS } from "../lib/wp/dummy-posts";
 
 const postsQueryOptions = queryOptions({
   queryKey: ["wp", "posts"],
@@ -13,13 +12,14 @@ const postsQueryOptions = queryOptions({
 });
 
 export const Route = createFileRoute("/blog")({
-  head: () =>
-    pageHead({
-      title: "Blog | Anup Kankale",
-      description:
-        "Notes on WordPress, open source contributions, AI integrations and freelance dev life.",
-      path: "/blog",
-    }),
+  head: () => ({
+    meta: [
+      { title: "Blog | Anup Kankale" },
+      { name: "description", content: "Notes on WordPress, open source contributions, AI integrations and freelance dev life." },
+      { property: "og:title", content: "Blog | Anup Kankale" },
+      { property: "og:description", content: "Notes on WordPress, open source and AI." },
+    ],
+  }),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(postsQueryOptions);
   },
@@ -39,9 +39,9 @@ function formatDate(value: string) {
 }
 
 function Blog() {
-  const { data: wpPosts } = useSuspenseQuery(postsQueryOptions);
-  // WordPress wins whenever it has anything to serve; these only fill the gap.
-  const posts = wpPosts.length > 0 ? wpPosts : fallbackPosts;
+  const { data: fetched } = useSuspenseQuery(postsQueryOptions);
+  const posts = fetched.length > 0 ? fetched : DUMMY_POSTS;
+  const isDummy = fetched.length === 0;
 
   return (
     <>
@@ -50,50 +50,42 @@ function Blog() {
         title={<>Notes from the <span className="text-accent">WordPress &amp; AI world.</span></>}
         lead="A slow blog. I write roughly every couple of weeks about things I actually use at work."
       />
-      <section className="mx-auto max-w-6xl px-6 py-20">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => {
-            const cover = getAcfImage(post.acf?.cover_image) ?? getFeaturedImage(post);
-            const excerpt = post.acf?.excerpt_custom ?? plainText(post.excerpt.rendered, 220);
+      <section className="mx-auto max-w-3xl px-6 py-20 space-y-6">
+        {isDummy ? (
+          <p className="text-center font-display text-xs tracking-widest text-accent">
+            SAMPLE POSTS · SHOWN UNTIL WORDPRESS IS CONNECTED
+          </p>
+        ) : null}
+        {posts.map((post) => {
+            const cover = getMetaImage(post.meta?.cover_image) ?? getFeaturedImage(post);
+            const excerpt = post.meta?.excerpt_custom || plainText(post.excerpt.rendered, 220);
             return (
               <Link
                 key={post.id}
                 to="/blog/$slug"
                 params={{ slug: post.slug }}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-1 hover:border-accent hover:shadow-[0_20px_40px_-20px_oklch(0.7_0.21_25/0.4)]"
+                className="block rounded-3xl bg-card p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_18px_50px_-20px_rgba(0,0,0,0.22)]"
               >
+                <p className="font-display text-xs tracking-widest text-accent">
+                  {formatDate(post.date)}
+                  {post.meta?.reading_time ? ` · ${post.meta.reading_time} MIN READ` : ""}
+                </p>
+                <h2
+                  className="mt-2 text-xl text-primary"
+                  dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+                />
                 {cover ? (
                   <img
                     src={cover}
                     alt=""
                     loading="lazy"
-                    className="aspect-[16/9] w-full object-cover"
+                    className="mt-4 aspect-[16/9] w-full rounded-xl object-cover"
                   />
-                ) : (
-                  // Keeps every card the same shape when a post has no cover.
-                  <div className="aspect-[16/9] w-full bg-[radial-gradient(circle_at_30%_20%,_var(--highlight),_transparent_70%)]" />
-                )}
-
-                <div className="flex flex-1 flex-col p-6">
-                  <p className="font-display text-xs tracking-widest text-accent">
-                    {formatDate(post.date)}
-                    {post.acf?.reading_time ? ` \u00b7 ${post.acf.reading_time} MIN READ` : ""}
-                  </p>
-                  <h2
-                    className="mt-2 text-xl text-primary leading-snug"
-                    dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-                  />
-                  <p className="mt-3 line-clamp-4 text-sm text-muted-foreground leading-relaxed">
-                    {excerpt}
-                  </p>
-                  <span className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-semibold text-accent group-hover:underline">
-                    Read post <span aria-hidden="true">&#8594;</span>
-                  </span>
-                </div>
+                ) : null}
+                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{excerpt}</p>
               </Link>
             );
           })}
-        </div>
       </section>
     </>
   );
