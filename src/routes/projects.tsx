@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { pageHead } from "../lib/seo";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
 import { listProjects } from "../lib/wp/content.functions";
@@ -11,14 +12,13 @@ const projectsQueryOptions = queryOptions({
 });
 
 export const Route = createFileRoute("/projects")({
-  head: () => ({
-    meta: [
-      { title: "Projects | Anup Kankale" },
-      { name: "description", content: "Selected WordPress, plugin and AI integration projects shipped by Anup Kankale." },
-      { property: "og:title", content: "Projects | Anup Kankale" },
-      { property: "og:description", content: "Selected WordPress, plugin and AI integration projects." },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Projects | Anup Kankale",
+      description:
+        "Selected WordPress, plugin and AI integration projects shipped by Anup Kankale.",
+      path: "/projects",
+    }),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(projectsQueryOptions);
   },

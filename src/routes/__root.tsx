@@ -14,10 +14,9 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader, SiteFooter } from "../components/site-layout";
 
-// Update this to your live domain once deployed — it builds the absolute URLs
-// used for canonical, Open Graph and Twitter card images.
-const SITE_URL = "https://anupkankale.com";
-const OG_IMAGE = `${SITE_URL}/anup-wordcamp.jpg`;
+import { SITE_NAME, SITE_URL, DEFAULT_OG_IMAGE, absoluteUrl } from "../lib/seo";
+
+const OG_IMAGE = absoluteUrl(DEFAULT_OG_IMAGE);
 const SITE_TITLE = "Anup Kankale · WordPress & PHP Developer | Frontend & AI";
 const SITE_DESCRIPTION =
   "Anup Kankale is a WordPress & PHP developer and frontend specialist from Mumbai, building responsive websites, custom plugins and themes, and AI-powered automations.";
@@ -25,6 +24,7 @@ const SITE_DESCRIPTION =
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <meta name="robots" content="noindex, nofollow" />
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
@@ -91,16 +91,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: SITE_DESCRIPTION },
       { name: "author", content: "Anup Kankale" },
       { name: "keywords", content: "Anup Kankale, WordPress developer, PHP developer, frontend developer, Vue.js, Nuxt.js, AI integration, automation, WordPress plugin developer, custom themes, Mumbai" },
-      { name: "robots", content: "index, follow" },
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
       { name: "theme-color", content: "#0071e3" },
       // Open Graph
-      { property: "og:site_name", content: "Anup Kankale" },
+      { property: "og:site_name", content: SITE_NAME },
+      { property: "og:locale", content: "en_IN" },
       { property: "og:title", content: SITE_TITLE },
       { property: "og:description", content: SITE_DESCRIPTION },
       { property: "og:type", content: "website" },
       { property: "og:url", content: SITE_URL },
       { property: "og:image", content: OG_IMAGE },
-      { property: "og:image:alt", content: "Anup Kankale speaking at WordCamp Asia 2026" },
+      { property: "og:image:alt", content: SITE_TITLE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:type", content: "image/png" },
       // Twitter
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: SITE_TITLE },
@@ -109,10 +113,54 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap",
+      },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "apple-touch-icon", href: "/favicon.png" },
       { rel: "manifest", href: "/site.webmanifest" },
-      { rel: "canonical", href: SITE_URL },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Person",
+              "@id": `${SITE_URL}/#person`,
+              name: SITE_NAME,
+              url: SITE_URL,
+              jobTitle: "WordPress Developer & AI Integration Specialist",
+              email: "mailto:anupkankaleak47@gmail.com",
+              address: { "@type": "PostalAddress", addressLocality: "Mumbai", addressCountry: "IN" },
+              nationality: { "@type": "Country", name: "India" },
+              worksFor: { "@type": "Organization", name: "Devxpertlabs", url: "https://www.devxpertlabs.com/" },
+              alumniOf: [{ "@type": "CollegeOrUniversity", name: "Sant Gadge Baba Amravati University" }],
+              knowsAbout: [
+                "WordPress", "PHP", "Gutenberg", "Vue.js", "Nuxt.js", "TypeScript",
+                "AI integrations", "Automation", "REST API", "WooCommerce",
+              ],
+              sameAs: [
+                "https://profiles.wordpress.org/anupkankale/",
+                "https://github.com/Anupkankale",
+                "https://in.linkedin.com/in/anupkankale",
+              ],
+            },
+            {
+              "@type": "WebSite",
+              "@id": `${SITE_URL}/#website`,
+              url: SITE_URL,
+              name: SITE_NAME,
+              inLanguage: "en",
+              publisher: { "@id": `${SITE_URL}/#person` },
+            },
+          ],
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -121,11 +169,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+// Query strings and hashes are dropped so tracking parameters never fragment
+// the canonical URL.
+function CanonicalLink() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const normalised = pathname !== "/" && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+  return <link rel="canonical" href={absoluteUrl(normalised)} />;
+}
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        <CanonicalLink />
       </head>
       <body>
         {children}
@@ -149,8 +206,14 @@ function RootComponent() {
         <Outlet />
       ) : (
         <div className="flex min-h-screen flex-col">
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+          >
+            Skip to content
+          </a>
           <SiteHeader />
-          <main className="flex-1">
+          <main id="main" className="flex-1">
             {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
             <Outlet />
           </main>

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { pageHead } from "../lib/seo";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
 import { listServices } from "../lib/wp/content.functions";
@@ -11,14 +12,13 @@ const servicesQueryOptions = queryOptions({
 });
 
 export const Route = createFileRoute("/services")({
-  head: () => ({
-    meta: [
-      { title: "Services | WordPress, AI & Automation | Anup Kankale" },
-      { name: "description", content: "WordPress development, custom plugins, AI integrations, automation workflows, performance optimization and ongoing maintenance." },
-      { property: "og:title", content: "Services | Anup Kankale" },
-      { property: "og:description", content: "WordPress development, custom plugins, AI integrations and automation workflows." },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Services | WordPress, AI & Automation | Anup Kankale",
+      description:
+        "WordPress development, custom plugins, AI integrations, automation workflows, performance optimization and ongoing maintenance.",
+      path: "/services",
+    }),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(servicesQueryOptions);
   },
