@@ -149,7 +149,16 @@ function Home() {
               existing site that needs work, both are welcome.
             </p>
             <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-              Currently building at <strong className="text-primary">Devxpertlab</strong> alongside freelance projects.
+              Currently building at{" "}
+              <a
+                href="https://www.devxpertlabs.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="font-semibold text-primary underline decoration-accent decoration-2 underline-offset-4 transition hover:text-accent"
+              >
+                Devxpertlabs
+              </a>{" "}
+              alongside freelance projects.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/projects" className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition">
