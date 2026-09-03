@@ -148,3 +148,11 @@ export const fallbackPosts: WPPost[] = drafts.map(toPost);
 export function findFallbackPost(slug: string): WPPost | null {
   return fallbackPosts.find((post) => post.slug === slug) ?? null;
 }
+
+/** Per-post 1200x630 social card, generated to match each headline. */
+export function fallbackOgImage(slug: string): string | null {
+  return drafts.some((d) => d.slug === slug) ? `/og/${slug}.png` : null;
+}
+
+/** Published date for a placeholder post, used in sitemap lastmod. */
+export const fallbackPostIndex = drafts.map((d) => ({ slug: d.slug, date: d.date }));

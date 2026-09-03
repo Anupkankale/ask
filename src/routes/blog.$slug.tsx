@@ -3,7 +3,8 @@ import { pageHead } from "../lib/seo";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { getPostBySlug } from "../lib/wp/content.functions";
-import { findFallbackPost } from "../lib/wp/fallback-posts";
+import { findFallbackPost, fallbackOgImage } from "../lib/wp/fallback-posts";
+import { absoluteUrl, SITE_NAME, SITE_URL } from "../lib/seo";
 import { getFeaturedImage, getAcfImage, plainText } from "../lib/wp/types";
 
 const postQueryOptions = (slug: string) =>
@@ -32,12 +33,49 @@ export const Route = createFileRoute("/blog/$slug")({
       placeholder?.acf?.excerpt_custom ??
       `${title}: notes on WordPress, open source and AI by Anup Kankale.`;
 
-    return pageHead({
-      title: `${title} | Anup Kankale`,
-      description,
-      path: `/blog/${params.slug}`,
-      type: "article",
-    });
+    const path = `/blog/${params.slug}`;
+    const image = fallbackOgImage(params.slug) ?? undefined;
+    const head = pageHead({ title: `${title} | Anup Kankale`, description, path, type: "article", image });
+
+    return {
+      ...head,
+      meta: [
+        ...head.meta,
+        { property: "article:author", content: SITE_NAME },
+        ...(placeholder ? [{ property: "article:published_time", content: placeholder.date }] : []),
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "BlogPosting",
+                "@id": `${absoluteUrl(path)}#post`,
+                headline: title,
+                description,
+                url: absoluteUrl(path),
+                mainEntityOfPage: absoluteUrl(path),
+                ...(placeholder ? { datePublished: placeholder.date, dateModified: placeholder.modified } : {}),
+                ...(image ? { image: absoluteUrl(image) } : {}),
+                author: { "@id": `${SITE_URL}/#person` },
+                publisher: { "@id": `${SITE_URL}/#person` },
+                inLanguage: "en",
+              },
+              {
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+                  { "@type": "ListItem", position: 2, name: "Blog", item: absoluteUrl("/blog") },
+                  { "@type": "ListItem", position: 3, name: title },
+                ],
+              },
+            ],
+          }),
+        },
+      ],
+    };
   },
   component: PostPage,
   notFoundComponent: PostNotFound,
@@ -101,6 +139,7 @@ function PostPage() {
 function PostNotFound() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-24 text-center">
+      <meta name="robots" content="noindex, nofollow" />
       <h1 className="text-3xl text-primary">Post not found</h1>
       <p className="mt-3 text-muted-foreground">
         This post may have been moved or hasn't been published yet.

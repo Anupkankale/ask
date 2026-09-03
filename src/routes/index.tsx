@@ -144,10 +144,12 @@ function Home() {
               WordPress &amp; AI <span className="text-accent">solutions,</span> no matter your requirements.
             </h1>
             <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
-              My name is <strong className="text-primary">Anup Kankale</strong>, and I&apos;m a WordPress Developer,
-              Open Source Contributor and AI enthusiast. I help businesses, startups and individuals build
-              modern websites, automate workflows and create powerful digital experiences, whether
-              you&apos;re launching something new or improving what you already have.
+              I&apos;m a WordPress developer, open source contributor and AI enthusiast. I build fast websites,
+              custom plugins and automations for businesses, startups and individuals. A new build or an
+              existing site that needs work, both are welcome.
+            </p>
+            <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
+              Currently building at <strong className="text-primary">Devxpertlab</strong> alongside freelance projects.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/projects" className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition">

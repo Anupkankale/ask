@@ -11,12 +11,12 @@ export const SITE_URL = (import.meta.env.VITE_SITE_URL ?? FALLBACK_SITE_URL).rep
 
 export const SITE_NAME = "Anup Kankale";
 
-// TODO: replace with a purpose-built 1200x630 social card. This is the old
-// Lovable preview screenshot and will look wrong when shared.
-export const DEFAULT_OG_IMAGE =
-  "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/399dad85-1d41-41f3-b3e0-6c250ee5c8fe/id-preview-f3097db2--2ef4790a-ae46-4cfe-add8-c43513b5ad2a.lovable.app-1781418172995.png";
+// 1200x630 social card. Absolute URLs are required: crawlers fetching og:image
+// do not resolve relative paths.
+export const DEFAULT_OG_IMAGE = "/og/default.png";
 
 export function absoluteUrl(path: string): string {
+  if (/^https?:\/\//.test(path)) return path;
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
@@ -58,12 +58,15 @@ export function pageHead({
       { property: "og:description", content: description },
       { property: "og:url", content: url },
       { property: "og:type", content: type },
-      { property: "og:image", content: image },
+      { property: "og:image", content: absoluteUrl(image) },
       { property: "og:image:alt", content: title },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:type", content: "image/png" },
 
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
-      { name: "twitter:image", content: image },
+      { name: "twitter:image", content: absoluteUrl(image) },
     ],
   };
 }
