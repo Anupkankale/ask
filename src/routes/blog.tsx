@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { pageHead } from "../lib/seo";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
 import { listPosts } from "../lib/wp/content.functions";
@@ -12,14 +13,13 @@ const postsQueryOptions = queryOptions({
 });
 
 export const Route = createFileRoute("/blog")({
-  head: () => ({
-    meta: [
-      { title: "Blog | Anup Kankale" },
-      { name: "description", content: "Notes on WordPress, open source contributions, AI integrations and freelance dev life." },
-      { property: "og:title", content: "Blog | Anup Kankale" },
-      { property: "og:description", content: "Notes on WordPress, open source and AI." },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Blog | Anup Kankale",
+      description:
+        "Notes on WordPress, open source contributions, AI integrations and freelance dev life.",
+      path: "/blog",
+    }),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(postsQueryOptions);
   },

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
 import { SITE_URL } from "../lib/seo";
-import { fallbackPostIndex } from "../lib/wp/fallback-posts";
+import { DUMMY_POSTS } from "../lib/wp/dummy-posts";
 
 interface SitemapEntry { path: string; changefreq?: string; priority?: string; lastmod?: string }
 
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/contact", changefreq: "yearly", priority: "0.6" },
           // Individual posts, so they are discoverable without relying on
           // crawlers walking the listing page.
-          ...fallbackPostIndex.map((post) => ({
+          ...DUMMY_POSTS.map((post): SitemapEntry => ({
             path: `/blog/${post.slug}`,
             changefreq: "yearly",
             priority: "0.6",

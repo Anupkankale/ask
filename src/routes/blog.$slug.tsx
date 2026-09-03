@@ -3,7 +3,8 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { getPostBySlug } from "../lib/wp/content.functions";
 import { getFeaturedImage, getMetaImage, plainText } from "../lib/wp/types";
-import { findDummyPost } from "../lib/wp/dummy-posts";
+import { findDummyPost, DUMMY_POSTS } from "../lib/wp/dummy-posts";
+import { pageHead, absoluteUrl, SITE_NAME, SITE_URL } from "../lib/seo";
 
 const postQueryOptions = (slug: string) =>
   queryOptions({
@@ -21,13 +22,57 @@ export const Route = createFileRoute("/blog/$slug")({
     if (!post) throw notFound();
   },
   head: ({ loaderData: _loaderData, params }) => {
-    // Loader returns void; we don't have data here. Defer detailed meta to the
-    // component-level fallback. This still emits a sensible title from slug.
-    const fallbackTitle = params.slug.replace(/-/g, " ");
+    // The loader returns void, so the post body is not available here. A known
+    // post carries a real title and excerpt; otherwise title-case the slug.
+    const known = DUMMY_POSTS.find((post) => post.slug === params.slug);
+    const title =
+      known?.title.rendered ??
+      params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const description =
+      known?.meta?.excerpt_custom ??
+      `${title}: notes on WordPress, open source and AI by Anup Kankale.`;
+
+    const path = `/blog/${params.slug}`;
+    const image = known ? `/og/${params.slug}.png` : undefined;
+    const head = pageHead({ title: `${title} | Anup Kankale`, description, path, type: "article", image });
+
     return {
+      ...head,
       meta: [
-        { title: `${fallbackTitle} | Anup Kankale` },
-        { property: "og:title", content: `${fallbackTitle} | Anup Kankale` },
+        ...head.meta,
+        { property: "article:author", content: SITE_NAME },
+        ...(known ? [{ property: "article:published_time", content: known.date }] : []),
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "BlogPosting",
+                "@id": `${absoluteUrl(path)}#post`,
+                headline: title,
+                description,
+                url: absoluteUrl(path),
+                mainEntityOfPage: absoluteUrl(path),
+                ...(known ? { datePublished: known.date, dateModified: known.modified } : {}),
+                ...(image ? { image: absoluteUrl(image) } : {}),
+                author: { "@id": `${SITE_URL}/#person` },
+                publisher: { "@id": `${SITE_URL}/#person` },
+                inLanguage: "en",
+              },
+              {
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+                  { "@type": "ListItem", position: 2, name: "Blog", item: absoluteUrl("/blog") },
+                  { "@type": "ListItem", position: 3, name: title },
+                ],
+              },
+            ],
+          }),
+        },
       ],
     };
   },
@@ -92,6 +137,7 @@ function PostPage() {
 function PostNotFound() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-24 text-center">
+      <meta name="robots" content="noindex, nofollow" />
       <h1 className="text-3xl text-primary">Post not found</h1>
       <p className="mt-3 text-muted-foreground">
         This post may have been moved or hasn't been published yet.

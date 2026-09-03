@@ -1,15 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { pageHead } from "../lib/seo";
 import { Blocks, Bot, Gauge, Github, Languages, Layout, Puzzle, Rocket, Sparkles, Workflow } from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Anup Kankale | WordPress Developer & AI Integration Specialist" },
-      { name: "description", content: "Freelance WordPress development, custom plugins and AI integrations. Building powerful web experiences from Mumbai, India." },
-      { property: "og:title", content: "Anup Kankale | WordPress & AI Developer" },
-      { property: "og:description", content: "Freelance WordPress development, custom plugins and AI integrations for any requirements." },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Anup Kankale | WordPress Developer & AI Integration Specialist",
+      description:
+        "Freelance WordPress development, custom plugins and AI integrations. Building powerful web experiences from Mumbai, India.",
+      path: "/",
+    }),
   component: Home,
 });
 
@@ -23,7 +23,85 @@ const services = [
   { icon: Gauge, title: "Performance & SEO", body: "Core Web Vitals, caching, image strategy and on-page SEO that make your site fast and findable." },
 ];
 
-const stack = ["WordPress", "PHP", "Vue.js", "Nuxt.js", "JavaScript", "Tailwind CSS", "WooCommerce", "REST API"];
+const stack = [
+  "WordPress", "PHP 8", "Custom Plugins", "Gutenberg Blocks", "Full-Site Editing",
+  "Hooks & Filters", "Custom Post Types", "REST API", "Headless WordPress", "WooCommerce",
+  "Elementor", "WP-Cron", "TypeScript", "Vue.js", "Nuxt.js", "Tailwind CSS", "JavaScript",
+  "MySQL", "Docker", "Git & GitHub", "Composer", "PHPUnit", "PHPCS",
+  "AI Integrations", "AI Chatbots", "OpenAI API", "RAG Architecture", "n8n Automations",
+  "AI Content Pipelines", "Core Web Vitals", "Performance Optimization", "Technical SEO",
+  "Plugin Security", "cPanel & Deployment", "Maintenance & Support",
+];
+
+// Rendered twice inside .marquee; the duplicate is aria-hidden so screen
+// readers announce the list once.
+function StackTrack({ "aria-hidden": ariaHidden }: { "aria-hidden"?: boolean }) {
+  return (
+    <div className="marquee-track" aria-hidden={ariaHidden}>
+      {stack.map((t) => (
+        <span
+          key={t}
+          className="rounded-full border border-border bg-secondary px-4 py-1.5 text-[13px] font-medium text-foreground/80"
+        >
+          {t}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+const givingBack = [
+  {
+    kind: "WordPress Core",
+    status: "Contributor",
+    title: "WordPress 7.0 \u201cArmstrong\u201d",
+    body: "Credited among 875-plus contributors on a WordPress core release used by millions of sites. Code that helps everyone, owned by no one.",
+    cta: "See the release credits",
+    href: "https://wordpress.org/news/2026/05/armstrong/",
+  },
+  {
+    kind: "WordPress Core",
+    status: "Contributor",
+    title: "WordPress 7.1 \u201cMary Lou\u201d",
+    body: "A second consecutive core release credit, with work landing in the HTML API, Block Supports and the CSS formatting functions.",
+    cta: "See the release credits",
+    href: "https://wordpress.org/news/2026/08/mary-lou/",
+  },
+  {
+    kind: "Free plugin \u00b7 WordPress.org",
+    status: "Live \u00b7 5 stars",
+    title: "DevXpert Lead Dashboard",
+    body: "A free, open-source (GPL) plugin on the official directory. Built for a real problem, given to the whole WordPress community to install and use.",
+    cta: "View on WordPress.org",
+    href: "https://wordpress.org/plugins/devxpert-lead-dashboard-for-forminator/",
+  },
+  {
+    kind: "Open source",
+    status: "Contributor",
+    title: "NudgeBee v1.3.0",
+    body: "Contributing to open-source tooling beyond WordPress: an AI and Kubernetes automation platform, pitching in on its agentic workflow builder and task runner.",
+    cta: "View the release",
+    href: "https://github.com/nudgebee/nudgebee/releases/tag/v1.3.0",
+  },
+];
+
+const kubeconVideos = [
+  {
+    id: "oDu5vqCKDbM",
+    title: "How Intuit Built Argo CD & Open-Sourced It",
+    blurb: "The story of a tool that started as an internal Intuit project and became CNCF-graduated infrastructure the whole industry runs on.",
+  },
+  {
+    id: "Fz9iCwfjaCk",
+    title: "Different Clouds. Same Kubernetes.",
+    blurb: "Nepal at KubeCon India, on why the portability promise is what makes Kubernetes worth the learning curve.",
+  },
+  {
+    id: "W-fBoowd_fs",
+    title: "From Nepal to KubeCon India",
+    blurb: "DevOps Kathmandu on crossing a border to reach the community, and what a regional user group gets out of it.",
+  },
+];
 
 const highlights = [
   { icon: Github, title: "Open source at heart", body: "A free WordPress chatbot plugin and an AI content pipeline, both public and shipping on GitHub." },
@@ -67,16 +145,13 @@ function Home() {
         </div>
 
         {/* Tech stack strip */}
-        <div className="mx-auto max-w-4xl px-6 pt-14 pb-20">
+        <div className="pt-14 pb-20">
           <p className="text-center text-[13px] font-medium uppercase tracking-widest text-muted-foreground/70">
             Tools I build with
           </p>
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
-            {stack.map((t) => (
-              <span key={t} className="rounded-full border border-border bg-secondary px-4 py-1.5 text-[13px] font-medium text-foreground/80">
-                {t}
-              </span>
-            ))}
+          <div className="marquee mt-5">
+            <StackTrack />
+            <StackTrack aria-hidden />
           </div>
         </div>
       </section>
@@ -175,6 +250,94 @@ function Home() {
           <p className="mt-10 text-center text-[15px] text-muted-foreground">
             …and an uncountable number of cups of chai. ☕
           </p>
+        </div>
+      </section>
+
+      {/* GIVING BACK */}
+      <section className="mx-auto max-w-5xl px-6 py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-semibold text-accent">Giving back</p>
+          <h2 className="mt-3 text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+            Contributing to the community, no strings attached.
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Before I ship anything of my own, I give back. These are the places I contribute time and code to the
+            open web, freely.
+          </p>
+        </div>
+
+        <div className="mt-14 grid gap-5 md:grid-cols-2">
+          {givingBack.map((item) => (
+            <a
+              key={item.title}
+              href={item.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex flex-col rounded-3xl bg-background p-7 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_-20px_rgba(0,0,0,0.22)]"
+            >
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <span className="text-sm font-semibold text-accent">{item.kind}</span>
+                <span className="rounded-full border border-border px-2.5 py-0.5 text-[13px] text-muted-foreground">
+                  {item.status}
+                </span>
+              </div>
+              <h3 className="mt-3 text-xl font-semibold tracking-tight text-foreground">{item.title}</h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{item.body}</p>
+              <span className="mt-5 inline-flex items-center gap-1 text-[15px] font-medium text-accent group-hover:underline">
+                {item.cta} <span aria-hidden="true">&#8594;</span>
+              </span>
+            </a>
+          ))}
+        </div>
+
+        <p className="mx-auto mt-12 max-w-3xl text-center text-lg leading-relaxed text-muted-foreground">
+          This part matters to me most. I contribute to WordPress core and open source without expecting anything
+          back, because the tools I build my work on were given to me the same way.
+        </p>
+      </section>
+
+      {/* FROM THE COMMUNITY */}
+      <section className="bg-secondary">
+        <div className="mx-auto max-w-5xl px-6 py-24">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold text-accent">From the community</p>
+            <h2 className="mt-3 text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+              KubeCon India, in conversation.
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Conversations recorded at KubeCon + CloudNativeCon India with the people building and running
+              open-source infrastructure.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-5 md:grid-cols-3">
+            {kubeconVideos.map((video) => (
+              <article key={video.id} className="overflow-hidden rounded-3xl bg-background shadow-sm">
+                <div className="aspect-video w-full bg-secondary">
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${video.id}`}
+                    title={video.title}
+                    loading="lazy"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="h-full w-full border-0"
+                  />
+                </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold leading-snug tracking-tight text-foreground">{video.title}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{video.blurb}</p>
+                  <a
+                    href={`https://youtu.be/${video.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 inline-flex items-center gap-1 text-[15px] font-medium text-accent hover:underline"
+                  >
+                    Watch on YouTube <span aria-hidden="true">&#8594;</span>
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 

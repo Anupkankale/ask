@@ -136,3 +136,65 @@
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+/* --- Logo -------------------------------------------------------------
+ * Kalam is scoped to the wordmark only; it is not used anywhere else.
+ */
+.logo-mark {
+  font-family: "Kalam", "Segoe Print", cursive;
+  font-weight: 700;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+/* --- Marquee ----------------------------------------------------------
+ * Two identical tracks sit side by side and both slide left by exactly
+ * their own width, so the second lands where the first started and the
+ * loop is seamless. Edge fades hide the wrap point.
+ */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+.marquee {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5rem, black calc(100% - 5rem), transparent);
+  mask-image: linear-gradient(to right, transparent, black 5rem, black calc(100% - 5rem), transparent);
+}
+
+.marquee-track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.625rem;
+  padding-right: 0.625rem;
+  min-width: 100%;
+  white-space: nowrap;
+  /* One cycle moves the track its full width, so perceived speed depends on
+   * how many items it holds. Raise this if more are added. */
+  animation: marquee-scroll 120s linear infinite;
+  will-change: transform;
+}
+
+/* Let visitors stop the strip to actually read it. */
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .marquee-track {
+    animation: none;
+  }
+  .marquee-track[aria-hidden="true"] {
+    display: none;
+  }
+}

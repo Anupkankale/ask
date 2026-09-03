@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { pageHead } from "../lib/seo";
 import { ArrowUpRight } from "lucide-react";
 import { PageHero } from "../components/page-hero";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact | Anup Kankale" },
-      { name: "description", content: "Get in touch with Anup Kankale for WordPress development, custom plugins or AI integration projects." },
-      { property: "og:title", content: "Contact | Anup Kankale" },
-      { property: "og:description", content: "Get in touch about WordPress, plugins or AI projects." },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Contact | Anup Kankale",
+      description:
+        "Get in touch with Anup Kankale for WordPress development, custom plugins or AI integration projects.",
+      path: "/contact",
+    }),
   component: Contact,
 });
 
