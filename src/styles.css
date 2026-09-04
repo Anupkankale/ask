@@ -292,3 +292,9 @@
   padding: 0.15rem 0.4rem;
   font-size: 0.9em;
 }
+
+/* Offset anchor targets so a sticky header does not cover the heading a
+ * table-of-contents link jumps to. */
+.post-body h2[id] {
+  scroll-margin-top: 6rem;
+}

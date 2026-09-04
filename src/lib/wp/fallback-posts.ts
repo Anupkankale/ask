@@ -12,6 +12,8 @@ interface Draft {
   excerpt: string;
   readingTime: number;
   cover: string;
+  /** Where the piece was originally published. */
+  linkedin: string;
   body: string;
 }
 
@@ -24,6 +26,7 @@ const drafts: Draft[] = [
       "They had traffic, a working form and leads arriving daily. What they did not have was any idea which of those leads had been called. A custom WordPress plugin solved it for the price of building it once.",
     readingTime: 8,
     cover: "/blog/lead-dashboard.svg",
+    linkedin: "https://www.linkedin.com/pulse/travel-agency-losing-leads-i-fixed-without-crm-anup-kankale-13csf/",
     body: `
       <p>A travel agency came to me with a problem that sounds trivial until you see the cost of it. They were running WordPress with Forminator for lead capture. Enquiries arrived every day. Almost none of them were being handled properly.</p>
       <p>The forms worked. The traffic was real. The leaks were entirely in what happened after submit.</p>
@@ -79,6 +82,7 @@ const drafts: Draft[] = [
       "An end-to-end pipeline that writes an SEO-shaped article and publishes it to WordPress in ten to fifteen seconds, for no ongoing AI cost. Here is the architecture and the parts that were awkward.",
     readingTime: 7,
     cover: "/blog/ai-content-pipeline.svg",
+    linkedin: "https://www.linkedin.com/pulse/just-built-ai-powered-content-automation-system-anup-kankale-b1dqf/",
     body: `
       <p>I built an end-to-end content pipeline that generates an SEO-optimised blog post and publishes it to WordPress in under fifteen seconds. The interesting part is not that AI wrote an article. It is the cost and latency profile that made it worth running at all.</p>
 
@@ -126,6 +130,7 @@ const drafts: Draft[] = [
       "You have traffic. You do not know which companies it belongs to. This plugin uses reverse IP lookup to name the organisations reading your site, and keeps every byte of it inside your own database.",
     readingTime: 6,
     cover: "/blog/visitor-intelligence.svg",
+    linkedin: "https://www.linkedin.com/feed/update/urn:li:activity:7439930796095778816/",
     body: `
       <p>Most B2B sites have a problem nobody says out loud. Traffic arrives, analytics counts it, and none of it tells you who is actually interested in what you sell.</p>
 
@@ -187,6 +192,11 @@ export const fallbackPosts: WPPost[] = drafts.map(toPost);
 
 export function findFallbackPost(slug: string): WPPost | null {
   return fallbackPosts.find((post) => post.slug === slug) ?? null;
+}
+
+/** Where a placeholder post was originally published, if anywhere. */
+export function fallbackPostSource(slug: string): string | null {
+  return drafts.find((d) => d.slug === slug)?.linkedin ?? null;
 }
 
 /** Per-post 1200x630 social card, generated to match each headline. */
