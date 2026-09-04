@@ -28,7 +28,7 @@ export const Route = createFileRoute("/blog/$slug")({
     const placeholder = findFallbackPost(params.slug);
     const title =
       placeholder?.title.rendered ??
-      params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+      params.slug.replace(/-/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
     const description =
       placeholder?.acf?.excerpt_custom ??
       `${title}: notes on WordPress, open source and AI by Anup Kankale.`;
@@ -129,7 +129,7 @@ function PostPage() {
         />
       ) : null}
       <div
-        className="prose prose-invert mt-10 max-w-none text-muted-foreground prose-headings:text-primary prose-a:text-accent"
+        className="post-body mt-10"
         dangerouslySetInnerHTML={{ __html: post.content.rendered }}
       />
     </article>

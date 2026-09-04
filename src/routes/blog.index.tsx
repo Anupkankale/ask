@@ -12,7 +12,7 @@ const postsQueryOptions = queryOptions({
   staleTime: 60_000,
 });
 
-export const Route = createFileRoute("/blog")({
+export const Route = createFileRoute("/blog/")({
   head: () =>
     pageHead({
       title: "Blog | Anup Kankale",
