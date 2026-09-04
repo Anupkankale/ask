@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img">
+  <rect width="1200" height="630" fill="#1c2260"/>
+  <path d="M520 315 C 600 315, 620 216, 690 216" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="3" stroke-dasharray="10 10"/>
+  <path d="M520 315 C 600 315, 620 216, 880 216" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="3" stroke-dasharray="10 10"/>
+  <path d="M520 315 C 600 315, 620 376, 690 376" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="3" stroke-dasharray="10 10"/>
+  <path d="M520 315 C 600 315, 620 376, 880 376" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="3" stroke-dasharray="10 10"/>
+  <rect x="250" y="235" width="270" height="160" rx="20" fill="#ef5f3c"/>
+  <rect x="690" y="160" width="150" height="112" rx="14" fill="none" stroke="#f2c94c" stroke-width="4"/>
+  <rect x="880" y="160" width="150" height="112" rx="14" fill="none" stroke="#f2c94c" stroke-width="4"/>
+  <rect x="690" y="320" width="150" height="112" rx="14" fill="none" stroke="#f2c94c" stroke-width="4"/>
+  <rect x="880" y="320" width="150" height="112" rx="14" fill="none" stroke="#f2c94c" stroke-width="4"/>
+
+</svg>

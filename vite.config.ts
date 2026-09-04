@@ -12,9 +12,4 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Windows Apache (XAMPP) already owns 8080 on this machine; move the dev
-  // server off it so localhost:<port> reaches Vite instead of Apache.
-  vite: {
-    server: { port: 5174, strictPort: false },
-  },
 });

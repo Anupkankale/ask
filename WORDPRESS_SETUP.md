@@ -1,30 +1,22 @@
-# Headless WordPress Backend Setup (Free Stack)
+# Headless WordPress Backend Setup
 
-This frontend reads its content from a WordPress install via the **core
-WordPress REST API + native post meta**. No paid plugins. No ACF. No
-Application Passwords.
+This frontend (TanStack Start) reads its content from a WordPress install via
+the WordPress REST API + ACF. Follow this guide once on your WP site, then
+drop the three credentials into your hosting environment.
 
-You only need:
+## 1. Install plugins
 
-1. WordPress (self-hosted or any WP host)
-2. One free plugin: **Custom Post Type UI** (to register CPTs in the admin)
-3. A single snippet pasted into your theme's `functions.php` (or the free
-   **Code Snippets** plugin) — it registers meta fields, adds CORS headers,
-   and exposes the public contact-form endpoint.
+| Plugin | Why |
+| --- | --- |
+| Advanced Custom Fields (ACF) | Custom fields on Posts, Projects, Services, Pages |
+| ACF to REST API | Exposes the `acf` object in REST responses |
+| Custom Post Type UI | Register the `projects`, `services`, `contact_submission` CPTs without code |
 
----
+> ACF Pro is not required. The free version works.
 
-## 1. Install the plugin
+## 2. Register Custom Post Types (CPT UI)
 
-- **Custom Post Type UI** — free, from the WordPress.org plugin directory.
-
-(Optional, only if you don't want to edit `functions.php` directly:
-install **Code Snippets** — also free — and paste the snippet from step 3
-as a new "PHP snippet, run everywhere".)
-
-## 2. Register the Custom Post Types (CPT UI)
-
-In WP Admin → **CPT UI → Add/Edit Post Types**, create:
+Create three CPTs in **CPT UI → Add/Edit Post Types**:
 
 ### `project`
 - Post Type Slug: `project`
@@ -32,7 +24,7 @@ In WP Admin → **CPT UI → Add/Edit Post Types**, create:
 - Public: **true**
 - Show in REST API: **true**
 - REST API base slug: `projects`
-- Supports: title, editor, excerpt, thumbnail, custom-fields, page-attributes
+- Supports: title, editor, excerpt, thumbnail, page-attributes (for menu_order)
 
 ### `service`
 - Post Type Slug: `service`
@@ -40,227 +32,113 @@ In WP Admin → **CPT UI → Add/Edit Post Types**, create:
 - Public: **true**
 - Show in REST API: **true**
 - REST API base slug: `services`
-- Supports: title, editor, excerpt, thumbnail, custom-fields, page-attributes
+- Supports: title, editor, excerpt, thumbnail, page-attributes
 
 ### `contact_submission`
 - Post Type Slug: `contact_submission`
 - Plural / Singular Label: Contact Submissions / Contact Submission
 - Public: **false**
 - Show UI: **true**
-- Show in REST API: **false** (writes happen through our custom endpoint)
-- Supports: title, editor, custom-fields
+- Show in REST API: **true** ← needed so the contact form can POST
+- REST API base slug: `contact_submission`
+- Supports: title, editor
 
-> Make sure **custom-fields** is checked under "Supports" for all three.
+## 3. Create ACF Field Groups
 
-## 3. Paste this snippet into `functions.php`
+For each group, set **Show in REST API: Yes** under the "REST API" tab.
 
-This single block does everything: registers meta keys so they appear in
-REST responses, adds CORS headers, and creates a public
-`POST /wp-json/site/v1/contact` endpoint with honeypot + rate-limit.
+### Posts (Blog)
+Location rule: `Post Type = Post`
+- `excerpt_custom` — Text
+- `reading_time` — Number
+- `cover_image` — Image (Return: Image URL)
+- `seo_title` — Text
+- `seo_description` — Textarea
+
+### Projects
+Location rule: `Post Type = Project`
+- `client` — Text
+- `role` — Text
+- `tech_stack` — Text (comma-separated) **or** Repeater with `tech` subfield
+- `live_url` — URL
+- `repo_url` — URL
+- `gallery` — Gallery (Return: Array)
+- `featured_order` — Number
+- `tag` — Text (e.g. "ENTERPRISE WORDPRESS")
+
+### Services
+Location rule: `Post Type = Service`
+- `icon_name` — Text (lucide icon name)
+- `short_description` — Textarea
+- `features` — Repeater with subfield `feature_text` (Text)
+- `price_from` — Text (e.g. "$500")
+- `order` — Number
+
+### Pages (Home / About)
+Location rule: `Post Type = Page`
+- `hero_title` — Text
+- `hero_subtitle` — Textarea
+- `body_blocks` — Flexible Content (optional, for future use)
+
+### Contact Submission
+Location rule: `Post Type = Contact Submission`
+- `email` — Email
+- `phone` — Text
+- `message` — Textarea
+- `source_page` — Text
+- `submitted_at` — Text (ISO datetime, written automatically)
+
+## 4. Enable CORS for the REST API
+
+Add this to your active theme's `functions.php` (or a small mu-plugin):
 
 ```php
-<?php
-/* =========================================================
- * Headless frontend integration — REST meta + contact form
- * ========================================================= */
-
-// --- 1. Expose meta fields on Posts / Projects / Services in REST ---
-add_action('init', function () {
-
-  $string = ['type' => 'string', 'single' => true, 'show_in_rest' => true];
-  $number = ['type' => 'number', 'single' => true, 'show_in_rest' => true];
-
-  // Blog post meta
-  foreach ([
-    'excerpt_custom', 'cover_image', 'seo_title', 'seo_description'
-  ] as $key) register_post_meta('post', $key, $string);
-  register_post_meta('post', 'reading_time', $number);
-
-  // Project meta
-  foreach ([
-    'client', 'role', 'tech_stack', 'live_url',
-    'repo_url', 'gallery', 'tag'
-  ] as $key) register_post_meta('project', $key, $string);
-  register_post_meta('project', 'featured_order', $number);
-
-  // Service meta
-  foreach ([
-    'icon_name', 'short_description', 'features', 'price_from'
-  ] as $key) register_post_meta('service', $key, $string);
-  register_post_meta('service', 'order', $number);
-
-  // Page meta (optional, for hero blocks)
-  foreach (['hero_title', 'hero_subtitle'] as $key)
-    register_post_meta('page', $key, $string);
-});
-
-// --- 2. CORS for the REST API (lock down origin in production) ---
 add_action('rest_api_init', function () {
   remove_filter('rest_pre_serve_request', 'rest_send_cors_headers');
   add_filter('rest_pre_serve_request', function ($value) {
-    header('Access-Control-Allow-Origin: *'); // replace * with your frontend origin
+    header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Allow-Headers: Authorization, Content-Type');
     return $value;
   });
 }, 15);
-
-// --- 3. Public contact-form endpoint: POST /wp-json/site/v1/contact ---
-add_action('rest_api_init', function () {
-  register_rest_route('site/v1', '/contact', [
-    'methods'  => 'POST',
-    'permission_callback' => '__return_true',
-    'callback' => function (WP_REST_Request $req) {
-
-      $name    = sanitize_text_field($req->get_param('name'));
-      $email   = sanitize_email($req->get_param('email'));
-      $phone   = sanitize_text_field((string) $req->get_param('phone'));
-      $message = sanitize_textarea_field((string) $req->get_param('message'));
-      $source  = sanitize_text_field((string) $req->get_param('source_page'));
-
-      if (!$name || !$email || !is_email($email) || strlen($message) < 10) {
-        return new WP_Error('invalid', 'Invalid submission', ['status' => 400]);
-      }
-
-      // Simple per-IP rate limit: max 5 submissions / hour
-      $ip  = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-      $key = 'contact_rl_' . md5($ip);
-      $hits = (int) get_transient($key);
-      if ($hits >= 5) {
-        return new WP_Error('rate_limited', 'Too many submissions', ['status' => 429]);
-      }
-      set_transient($key, $hits + 1, HOUR_IN_SECONDS);
-
-      $post_id = wp_insert_post([
-        'post_type'    => 'contact_submission',
-        'post_status'  => 'private',
-        'post_title'   => 'Message from ' . $name,
-        'post_content' => $message,
-        'meta_input'   => [
-          'email'        => $email,
-          'phone'        => $phone,
-          'source_page'  => $source,
-          'submitted_at' => current_time('mysql'),
-        ],
-      ], true);
-
-      if (is_wp_error($post_id)) {
-        return new WP_Error('save_failed', 'Could not save', ['status' => 500]);
-      }
-
-      // Email notification to site admin
-      $admin = get_option('admin_email');
-      wp_mail(
-        $admin,
-        'New contact submission from ' . $name,
-        "Name: $name\nEmail: $email\nPhone: $phone\nPage: $source\n\n$message",
-        ['Reply-To: ' . $email]
-      );
-
-      return ['id' => $post_id, 'ok' => true];
-    },
-  ]);
-});
 ```
 
-## 4. Add the meta fields when editing posts
+## 5. Create an Application Password
 
-With **custom-fields** support enabled on each CPT, you'll see a
-**Custom Fields** panel below the editor. (If you don't, open the editor's
-three-dot menu → Preferences → Panels → enable "Custom Fields".)
+The contact form writes a private `contact_submission` post. WP requires HTTP
+Basic Auth credentials for this:
 
-For each post / project / service, add a row using the **exact meta key
-name** listed in the snippet, e.g.:
+1. Log in to WP Admin → **Users → Profile**
+2. Scroll to **Application Passwords**
+3. Name it `Lovable Contact Form` and click **Add New Application Password**
+4. Copy the generated password (you only see it once)
 
-- `cover_image` → paste the image URL
-- `tech_stack` → `React, WordPress, n8n`
-- `features` → one per line, or comma-separated
-- `live_url` → `https://example.com`
+## 6. Set the three secrets in your hosting environment
 
-Featured images and categories work the standard WordPress way — no meta
-field needed.
-
-## 5. Set the secret in your hosting environment
-
-The frontend only needs **one** environment variable:
+The frontend reads these as server-side environment variables:
 
 | Variable | Example | Notes |
 | --- | --- | --- |
 | `WP_API_URL` | `https://yoursite.com/wp-json` | No trailing slash |
+| `WP_APP_USER` | `anup` | Your WP username |
+| `WP_APP_PASSWORD` | `xxxx xxxx xxxx xxxx xxxx xxxx` | The Application Password (spaces OK) |
 
-Add it under **Lovable → Project Settings → Secrets** (or in a local
-`.env` file). No username, no password, no API key.
+On Lovable, store these under **Project Settings → Secrets** (or enable Lovable
+Cloud — see the Cloud docs). Locally, drop them into a `.env` file (already
+gitignored).
 
-## 6. Verify
+## 7. Verify
 
-- `https://yoursite.com/wp-json/wp/v2/posts` → JSON with a `meta` object
-- `https://yoursite.com/wp-json/wp/v2/projects` → JSON list
-- `https://yoursite.com/wp-json/wp/v2/services` → JSON list
-- Submit `/contact` on the frontend → a private **Contact Submission**
-  appears in WP Admin and an email lands in the admin inbox.
+- Visit `https://yoursite.com/wp-json/wp/v2/posts` → JSON list of posts.
+- Visit `https://yoursite.com/wp-json/wp/v2/projects` → JSON list (may be empty).
+- Visit `/blog`, `/projects`, `/services` on the frontend → content appears.
+- Submit the contact form → a new private `Contact Submission` appears in WP Admin.
 
-## Tighten security before going live
+## What's not included yet
 
-- Replace `Access-Control-Allow-Origin: *` with your actual frontend origin.
-- The contact endpoint already has a per-IP rate limit + length check; add a
-  Cloudflare Turnstile / reCAPTCHA token check if you get spam.
-
----
-
-## Optional: Enable GraphQL (WPGraphQL)
-
-If you'd rather query WordPress with GraphQL instead of REST, install the
-free **WPGraphQL** plugin. The frontend automatically prefers GraphQL when
-`WP_GRAPHQL_URL` is set and silently falls back to REST otherwise — you can
-turn it on or off with a single env var, no code changes.
-
-### 1. Install free plugins
-
-- **WPGraphQL** — https://wordpress.org/plugins/wp-graphql/
-- **WPGraphQL for Custom Post Type UI** — exposes the `project` and
-  `service` CPTs you already created to the GraphQL schema with one click
-  (in CPT UI, edit each CPT and set **Show in GraphQL = true**, GraphQL
-  Single Name = `Project` / `Service`, Plural = `Projects` / `Services`).
-
-### 2. Expose meta fields on the GraphQL schema
-
-WPGraphQL doesn't ship native post meta as queryable fields out of the box.
-Paste this snippet alongside the one above in `functions.php` to add a
-generic `metaValue(key:)` field on every CPT we use:
-
-```php
-add_action('graphql_register_types', function () {
-  $types = ['Post', 'Project', 'Service', 'Page'];
-  foreach ($types as $type) {
-    register_graphql_field($type, 'metaValue', [
-      'type'    => 'String',
-      'args'    => ['key' => ['type' => ['non_null' => 'String']]],
-      'resolve' => function ($post, $args) {
-        $v = get_post_meta($post->databaseId, $args['key'], true);
-        return is_scalar($v) ? (string) $v : null;
-      },
-    ]);
-  }
-});
-```
-
-### 3. Confirm the endpoint
-
-Default URL is `https://yoursite.com/graphql`. Test with:
-
-```bash
-curl -X POST https://yoursite.com/graphql \
-  -H "Content-Type: application/json" \
-  -d '{"query":"{ posts(first:3){ nodes{ slug title } } }"}'
-```
-
-### 4. Set the env var
-
-Add to your hosting environment (or Lovable Project Settings → Secrets):
-
-| Variable | Example |
-| --- | --- |
-| `WP_GRAPHQL_URL` | `https://yoursite.com/graphql` |
-
-That's it — the frontend will start using GraphQL on the next request. Unset
-the variable to switch back to REST.
+- **Email notifications** on contact-form submit. This requires Lovable Cloud +
+  an email domain. Once enabled, the `/api/public/contact` route will be wired
+  to send a confirmation to the submitter and a notification to you.
+- **Page builder content** for Home / About is still hardcoded. The
+  `pages` ACF group is defined so we can wire it up next when you're ready.

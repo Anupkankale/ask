@@ -1,8 +1,7 @@
-// Public POST endpoint for the contact form. Validates input, then forwards
-// to a custom WordPress REST endpoint (`/wp-json/site/v1/contact`) defined
-// in the WP theme's functions.php. The WP endpoint stores submissions as
-// private `contact_submission` posts — no Application Password / paid plugin
-// required.
+// Public POST endpoint for the contact form. Validates input, then writes
+// a private `contact_submission` custom post to WordPress using an
+// Application Password. Email notifications will be added once Lovable
+// Cloud + an email domain are configured.
 
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
@@ -65,24 +64,31 @@ export const Route = createFileRoute("/api/public/contact")({
         if (website) return json(200, { ok: true });
 
         try {
-          const created = await wpFetch<{ id: number }>({
-            path: "/site/v1/contact",
+          const created = await wpFetch<{ id: number; link: string }>({
+            path: "/wp/v2/contact_submission",
             method: "POST",
+            authenticated: true,
             body: {
-              name,
-              email,
-              phone: phone || "",
-              message,
-              source_page: source_page || "",
+              title: `Message from ${name}`,
+              status: "private",
+              content: message,
+              acf: {
+                email,
+                phone: phone || "",
+                message,
+                source_page: source_page || "",
+                submitted_at: new Date().toISOString(),
+              },
             },
           });
 
           return json(200, { ok: true, id: created.id });
         } catch (err) {
           if (err instanceof WPNotConfiguredError) {
+            console.error("[contact] WP_API_URL is not configured");
             return json(503, {
               ok: false,
-              error: "Contact form is not connected to a backend yet.",
+              error: "Could not deliver your message. Please try again or email directly.",
             });
           }
           if (err instanceof WPRequestError) {
