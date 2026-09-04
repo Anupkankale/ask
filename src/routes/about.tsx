@@ -13,11 +13,26 @@ export const Route = createFileRoute("/about")({
   component: About,
 });
 
+// Every outbound brand mention uses this, so they read consistently.
+function BrandLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="font-semibold text-primary underline decoration-accent decoration-2 underline-offset-4 transition hover:text-accent"
+    >
+      {children}
+    </a>
+  );
+}
+
 const experience = [
   {
     period: "Nov 2024 - Present",
     role: "Senior Web Developer",
     company: "Yallo Group",
+    companyUrl: "https://yallo.co/",
     location: "Dubai",
     points: [
       "Architected and built Saasinator, a 30-40 page enterprise AI platform site in Nuxt.js, Vue and TypeScript, deployed on DigitalOcean.",
@@ -36,6 +51,7 @@ const experience = [
       "Shipped high-converting landing pages for marketing campaigns, tuned for speed and lead generation.",
       "Led development and ongoing maintenance of the TRIOS website, including security hardening.",
     ],
+    links: [{ label: "TRIOS", href: "https://trios.co.in" }],
   },
   {
     period: "Mar 2023 - May 2024",
@@ -70,8 +86,8 @@ function About() {
         lead="I help businesses build modern WordPress websites and add intelligent, AI-powered features without losing the simplicity that makes WordPress great."
       />
       <section className="mx-auto max-w-3xl px-6 py-20 space-y-6 text-lg leading-relaxed text-muted-foreground">
-        <p>I&apos;m based in <strong className="text-primary">Mumbai, India</strong> with <strong className="text-primary">4+ years</strong> of experience building full-stack web applications, from small business sites to enterprise platforms with 90+ pages and complex editorial workflows. Day to day that means PHP and WordPress on one side, and Nuxt.js, Vue and TypeScript on the other.</p>
-        <p>I&apos;m a proud <strong className="text-primary">WordPress Core contributor</strong>, credited in the 7.0 &ldquo;Armstrong&rdquo; and 7.1 &ldquo;Mary Lou&rdquo; releases for work on the HTML API, Block Supports and CSS formatting functions. I&apos;ve also authored <strong className="text-primary">four open-source WordPress plugins</strong> and contribute to projects beyond WordPress, like the NudgeBee AI/SRE platform.</p>
+        <p>I&apos;m based in <strong className="text-primary">Mumbai, India</strong> with <strong className="text-primary">4+ years</strong> of experience building full-stack web applications. Day to day that means PHP and WordPress on one side, and Nuxt.js, Vue and TypeScript on the other. Currently building at <BrandLink href="https://www.devxpertlabs.com/">Devxpertlabs</BrandLink> alongside freelance projects.</p>
+        <p>I&apos;m a proud <strong className="text-primary">WordPress Core contributor</strong>, credited in the 7.0 &ldquo;Armstrong&rdquo; and 7.1 &ldquo;Mary Lou&rdquo; releases for work on the HTML API, Block Supports and CSS formatting functions. I&apos;ve also authored <BrandLink href="https://profiles.wordpress.org/anupkankale/">four open-source WordPress plugins</BrandLink> and contribute to projects beyond WordPress, like <BrandLink href="https://github.com/nudgebee/nudgebee">NudgeBee</BrandLink>, an AI and Kubernetes platform.</p>
         <p>My current obsession is the intersection of <strong className="text-primary">WordPress and AI</strong>: chatbots, LLM-powered content tools, and n8n automations that quietly take care of repetitive work so teams can focus on the meaningful parts of their job.</p>
         <p>I believe great websites should be <strong className="text-primary">fast, accessible and easy to manage</strong>. That&apos;s the bar I try to hit on every project, big or small.</p>
         <div className="pt-2">
@@ -97,7 +113,22 @@ function About() {
                 <span className="absolute -left-[1.85rem] top-2 h-3 w-3 rounded-full border-2 border-background bg-accent md:-left-[2.35rem]" />
                 <p className="font-display text-xs tracking-widest text-muted-foreground">{job.period}</p>
                 <h3 className="mt-1 text-xl text-primary">
-                  {job.role} <span className="text-accent">· {job.company}</span>
+                  {job.role}{" "}
+                  <span className="text-accent">
+                    ·{" "}
+                    {"companyUrl" in job && job.companyUrl ? (
+                      <a
+                        href={job.companyUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline decoration-accent/50 decoration-2 underline-offset-4 transition hover:text-primary"
+                      >
+                        {job.company}
+                      </a>
+                    ) : (
+                      job.company
+                    )}
+                  </span>
                 </h3>
                 <p className="text-sm text-muted-foreground">{job.location}</p>
                 <ul className="mt-3 space-y-2">
@@ -108,6 +139,21 @@ function About() {
                     </li>
                   ))}
                 </ul>
+                {"links" in job && job.links ? (
+                  <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+                    {job.links.map((link) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm font-semibold text-accent hover:underline"
+                      >
+                        {link.label} <span aria-hidden="true">&#8599;</span>
+                      </a>
+                    ))}
+                  </p>
+                ) : null}
               </li>
             ))}
           </ol>
