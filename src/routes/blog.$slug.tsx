@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { pageHead } from "../lib/seo";
+import { CtaCard, ctaPrimary, ctaSecondary } from "../components/cta-card";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { getPostBySlug } from "../lib/wp/content.functions";
@@ -16,33 +17,49 @@ const postQueryOptions = (slug: string) =>
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params, context }) => {
-    const post = await context.queryClient.ensureQueryData(postQueryOptions(params.slug));
-    if (!post && !findFallbackPost(params.slug)) throw notFound();
+    const wpPost = await context.queryClient.ensureQueryData(postQueryOptions(params.slug));
+    const post = wpPost ?? findFallbackPost(params.slug);
+    if (!post) throw notFound();
+    return { post };
   },
-  head: ({ loaderData: _loaderData, params }) => {
-    // The loader returns void, so the post body is not available here. Derive a
-    // readable title from the slug and mark the page as an article so it still
-    // ships a canonical URL and a complete social card.
-    // A known placeholder post carries a real title and excerpt; otherwise fall
-    // back to title-casing the slug, which is all the loader gives us here.
-    const placeholder = findFallbackPost(params.slug);
-    const title =
-      placeholder?.title.rendered ??
-      params.slug.replace(/-/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+  head: ({ loaderData, params }) => {
+    // The loader hands over the resolved post (WordPress first, then the
+    // fallback), so real posts get their own title, description and dates.
+    const post = loaderData?.post;
+    const title = post
+      ? plainText(post.title.rendered, 200)
+      : params.slug.replace(/-/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
     const description =
-      placeholder?.acf?.excerpt_custom ??
+      post?.acf?.excerpt_custom ||
+      plainText(post?.excerpt.rendered, 160) ||
       `${title}: notes on WordPress, open source and AI by Anup Kankale.`;
 
     const path = `/blog/${params.slug}`;
-    const image = fallbackOgImage(params.slug) ?? undefined;
-    const head = pageHead({ title: `${title} | Anup Kankale`, description, path, type: "article", image });
+    // Fallback covers are SVG, which social crawlers reject, so those posts use
+    // their generated PNG card instead.
+    const image =
+      fallbackOgImage(params.slug) ??
+      (post ? (getAcfImage(post.acf?.cover_image) ?? getFeaturedImage(post)) : null) ??
+      undefined;
+    const head = pageHead({
+      title: `${title} | Anup Kankale`,
+      description,
+      path,
+      type: "article",
+      image,
+    });
 
     return {
       ...head,
       meta: [
         ...head.meta,
         { property: "article:author", content: SITE_NAME },
-        ...(placeholder ? [{ property: "article:published_time", content: placeholder.date }] : []),
+        ...(post
+          ? [
+              { property: "article:published_time", content: post.date },
+              { property: "article:modified_time", content: post.modified },
+            ]
+          : []),
       ],
       scripts: [
         {
@@ -57,7 +74,7 @@ export const Route = createFileRoute("/blog/$slug")({
                 description,
                 url: absoluteUrl(path),
                 mainEntityOfPage: absoluteUrl(path),
-                ...(placeholder ? { datePublished: placeholder.date, dateModified: placeholder.modified } : {}),
+                ...(post ? { datePublished: post.date, dateModified: post.modified } : {}),
                 ...(image ? { image: absoluteUrl(image) } : {}),
                 author: { "@id": `${SITE_URL}/#person` },
                 publisher: { "@id": `${SITE_URL}/#person` },
@@ -82,7 +99,6 @@ export const Route = createFileRoute("/blog/$slug")({
   errorComponent: PostError,
 });
 
-
 // Pulls the h2s out of the post HTML and gives each one an id, so the table of
 // contents can link to them. Done here rather than stored, so it stays correct
 // for real WordPress content too.
@@ -90,18 +106,21 @@ function withHeadingIds(html: string) {
   const headings: Array<{ id: string; text: string }> = [];
   const used = new Set<string>();
 
-  const withIds = html.replace(/<h2([^>]*)>([\s\S]*?)<\/h2>/g, (_match, attrs: string, inner: string) => {
-    const text = inner.replace(/<[^>]+>/g, "").trim();
-    let id = text
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-    let n = 2;
-    while (used.has(id)) id = `${id}-${n++}`;
-    used.add(id);
-    headings.push({ id, text });
-    return `<h2${attrs} id="${id}">${inner}</h2>`;
-  });
+  const withIds = html.replace(
+    /<h2([^>]*)>([\s\S]*?)<\/h2>/g,
+    (_match, attrs: string, inner: string) => {
+      const text = inner.replace(/<[^>]+>/g, "").trim();
+      let id = text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      let n = 2;
+      while (used.has(id)) id = `${id}-${n++}`;
+      used.add(id);
+      headings.push({ id, text });
+      return `<h2${attrs} id="${id}">${inner}</h2>`;
+    },
+  );
 
   return { html: withIds, headings };
 }
@@ -134,7 +153,10 @@ function PostPage() {
       {/* HERO, mirroring the section rhythm used on the homepage */}
       <section className="border-b border-border bg-card">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
-          <Link to="/blog" className="font-display text-xs tracking-widest text-accent hover:underline">
+          <Link
+            to="/blog"
+            className="font-display text-xs tracking-widest text-accent hover:underline"
+          >
             BACK TO BLOG
           </Link>
           <div className="mt-8 grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
@@ -203,10 +225,12 @@ function PostPage() {
 
             {source ? (
               <div className="mt-14 max-w-2xl rounded-2xl border border-border bg-card p-6">
-                <p className="font-display text-xs tracking-widest text-accent">ORIGINALLY PUBLISHED</p>
+                <p className="font-display text-xs tracking-widest text-accent">
+                  ORIGINALLY PUBLISHED
+                </p>
                 <p className="mt-2 text-muted-foreground">
-                  This piece first appeared on LinkedIn. The version there has the original comments and
-                  discussion.
+                  This piece first appeared on LinkedIn. The version there has the original comments
+                  and discussion.
                 </p>
                 <a
                   href={source}
@@ -222,33 +246,17 @@ function PostPage() {
         </div>
       </section>
 
-      {/* CTA, the same block the homepage closes with */}
-      <section className="mx-auto max-w-6xl px-6 pb-24">
-        <div className="relative overflow-hidden rounded-3xl bg-[oklch(0.96_0.04_80)] p-10 md:p-16">
-          <div className="relative z-10 max-w-2xl">
-            <h2 className="text-4xl text-primary md:text-5xl">Got a project like this one?</h2>
-            <p className="mt-4 text-muted-foreground">
-              If any of the above sounds like a problem you have, I would like to hear about it. WordPress
-              builds, custom plugins, AI features and automations.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                to="/contact"
-                className="inline-flex items-center justify-center rounded-full bg-accent px-7 py-3 text-sm font-semibold text-accent-foreground transition hover:opacity-90"
-              >
-                Start a conversation <span aria-hidden="true">&#8594;</span>
-              </Link>
-              <Link
-                to="/blog"
-                className="inline-flex items-center justify-center rounded-full border-2 border-primary px-7 py-3 text-sm font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground"
-              >
-                Read more posts
-              </Link>
-            </div>
-          </div>
-          <div className="absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-accent/20 blur-3xl" />
-        </div>
-      </section>
+      <CtaCard
+        title="Got a project like this one?"
+        body="If any of the above sounds like a problem you have, I would like to hear about it. WordPress builds, custom plugins, Nuxt and React apps, AI features and automations."
+      >
+        <Link to="/contact" className={ctaPrimary}>
+          Start a conversation <span aria-hidden="true">&#8594;</span>
+        </Link>
+        <Link to="/blog" className={ctaSecondary}>
+          Read more posts
+        </Link>
+      </CtaCard>
     </div>
   );
 }

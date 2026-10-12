@@ -1,5 +1,6 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import { useState } from "react";
+import { Menu, X } from "lucide-react";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -32,15 +33,22 @@ export function SiteHeader() {
           ))}
         </nav>
         <button
-          aria-label="Toggle menu"
+          type="button"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
           className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border"
           onClick={() => setOpen((v) => !v)}
         >
-          <span className="i">≡</span>
+          {open ? (
+            <X className="h-5 w-5" aria-hidden="true" />
+          ) : (
+            <Menu className="h-5 w-5" aria-hidden="true" />
+          )}
         </button>
       </div>
       {open && (
-        <div className="md:hidden border-t border-border bg-background">
+        <div id="mobile-nav" className="md:hidden border-t border-border bg-background">
           <nav className="mx-auto flex max-w-6xl flex-col px-6 py-3">
             {nav.map((n) => (
               <Link
@@ -68,7 +76,8 @@ export function SiteFooter() {
         <div>
           <p className="font-display text-xl text-primary">ANUP KANKALE.</p>
           <p className="mt-2 text-sm text-muted-foreground max-w-xs">
-            Freelance WordPress development, custom plugins and AI-powered web experiences, built from Mumbai and shipped worldwide.
+            Freelance WordPress, Nuxt.js and React development, plus AI-powered web experiences,
+            built from Mumbai and shipped worldwide.
           </p>
         </div>
         <div>
@@ -76,7 +85,9 @@ export function SiteFooter() {
           <ul className="mt-3 space-y-1.5 text-sm">
             {nav.map((n) => (
               <li key={n.to}>
-                <Link to={n.to} className="text-primary/80 hover:text-accent">{n.label}</Link>
+                <Link to={n.to} className="text-primary/80 hover:text-accent">
+                  {n.label}
+                </Link>
               </li>
             ))}
           </ul>
@@ -84,10 +95,41 @@ export function SiteFooter() {
         <div>
           <p className="font-display text-sm tracking-widest text-accent">ELSEWHERE</p>
           <ul className="mt-3 space-y-1.5 text-sm">
-            <li><a className="hover:text-accent" href="https://profiles.wordpress.org/anupkankale/" target="_blank" rel="noreferrer">WordPress.org profile</a></li>
-            <li><a className="hover:text-accent" href="https://in.linkedin.com/in/anupkankale" target="_blank" rel="noreferrer">LinkedIn</a></li>
-            <li><a className="hover:text-accent" href="https://gravatar.com/anupkankale" target="_blank" rel="noreferrer">Gravatar</a></li>
-            <li><a className="hover:text-accent" href="mailto:anupkankaleak47@gmail.com">anupkankaleak47@gmail.com</a></li>
+            <li>
+              <a
+                className="hover:text-accent"
+                href="https://profiles.wordpress.org/anupkankale/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                WordPress.org profile
+              </a>
+            </li>
+            <li>
+              <a
+                className="hover:text-accent"
+                href="https://in.linkedin.com/in/anupkankale"
+                target="_blank"
+                rel="noreferrer"
+              >
+                LinkedIn
+              </a>
+            </li>
+            <li>
+              <a
+                className="hover:text-accent"
+                href="https://gravatar.com/anupkankale"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Gravatar
+              </a>
+            </li>
+            <li>
+              <a className="hover:text-accent" href="mailto:anupkankaleak47@gmail.com">
+                anupkankaleak47@gmail.com
+              </a>
+            </li>
           </ul>
         </div>
       </div>

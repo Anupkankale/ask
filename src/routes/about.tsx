@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "../components/page-hero";
 import { pageHead } from "../lib/seo";
+import { CtaCard, ctaPrimary, ctaSecondary } from "../components/cta-card";
 
 export const Route = createFileRoute("/about")({
   head: () =>
@@ -67,8 +68,16 @@ const experience = [
 ];
 
 const education = [
-  { period: "2021 - 2023", qualification: "MCA, Master of Computer Applications", place: "Sant Gadge Baba Amravati University" },
-  { period: "2018 - 2021", qualification: "BCA, Bachelor of Computer Applications", place: "Shri Shivaji Science College" },
+  {
+    period: "2021 - 2023",
+    qualification: "MCA, Master of Computer Applications",
+    place: "Sant Gadge Baba Amravati University",
+  },
+  {
+    period: "2018 - 2021",
+    qualification: "BCA, Bachelor of Computer Applications",
+    place: "Shri Shivaji Science College",
+  },
 ];
 
 const certificates = [
@@ -82,14 +91,45 @@ function About() {
     <>
       <PageHero
         eyebrow="ABOUT ME"
-        title={<>Hi, I&apos;m Anup. <span className="text-accent">A developer who loves the open web.</span></>}
+        title={
+          <>
+            Hi, I&apos;m Anup.{" "}
+            <span className="text-accent">A developer who loves the open web.</span>
+          </>
+        }
         lead="I help businesses build modern WordPress websites and add intelligent, AI-powered features without losing the simplicity that makes WordPress great."
       />
       <section className="mx-auto max-w-3xl px-6 py-20 space-y-6 text-lg leading-relaxed text-muted-foreground">
-        <p>I&apos;m based in <strong className="text-primary">Mumbai, India</strong> with <strong className="text-primary">4+ years</strong> of experience building full-stack web applications. Day to day that means PHP and WordPress on one side, and Nuxt.js, Vue and TypeScript on the other. Currently building at <BrandLink href="https://www.devxpertlabs.com/">Devxpertlabs</BrandLink> alongside freelance projects.</p>
-        <p>I&apos;m a proud <strong className="text-primary">WordPress Core contributor</strong>, credited in the 7.0 &ldquo;Armstrong&rdquo; and 7.1 &ldquo;Mary Lou&rdquo; releases for work on the HTML API, Block Supports and CSS formatting functions. I&apos;ve also authored <BrandLink href="https://profiles.wordpress.org/anupkankale/">four open-source WordPress plugins</BrandLink> and contribute to projects beyond WordPress, like <BrandLink href="https://github.com/nudgebee/nudgebee">NudgeBee</BrandLink>, an AI and Kubernetes platform.</p>
-        <p>My current obsession is the intersection of <strong className="text-primary">WordPress and AI</strong>: chatbots, LLM-powered content tools, and n8n automations that quietly take care of repetitive work so teams can focus on the meaningful parts of their job.</p>
-        <p>I believe great websites should be <strong className="text-primary">fast, accessible and easy to manage</strong>. That&apos;s the bar I try to hit on every project, big or small.</p>
+        <p>
+          I&apos;m based in <strong className="text-primary">Mumbai, India</strong> with{" "}
+          <strong className="text-primary">4+ years</strong> of experience building full-stack web
+          applications. Day to day that means PHP and WordPress on one side, and Nuxt.js, Vue and
+          TypeScript on the other. Currently building at{" "}
+          <BrandLink href="https://www.devxpertlabs.com/">Devxpertlabs</BrandLink> alongside
+          freelance projects.
+        </p>
+        <p>
+          I&apos;m a proud <strong className="text-primary">WordPress Core contributor</strong>,
+          credited in the 7.0 &ldquo;Armstrong&rdquo; and 7.1 &ldquo;Mary Lou&rdquo; releases for
+          work on the HTML API, Block Supports and CSS formatting functions. I&apos;ve also authored{" "}
+          <BrandLink href="https://profiles.wordpress.org/anupkankale/">
+            four open-source WordPress plugins
+          </BrandLink>{" "}
+          and contribute to projects beyond WordPress, like{" "}
+          <BrandLink href="https://github.com/nudgebee/nudgebee">NudgeBee</BrandLink>, an AI and
+          Kubernetes platform.
+        </p>
+        <p>
+          My current obsession is the intersection of{" "}
+          <strong className="text-primary">WordPress and AI</strong>: chatbots, LLM-powered content
+          tools, and n8n automations that quietly take care of repetitive work so teams can focus on
+          the meaningful parts of their job.
+        </p>
+        <p>
+          I believe great websites should be{" "}
+          <strong className="text-primary">fast, accessible and easy to manage</strong>. That&apos;s
+          the bar I try to hit on every project, big or small.
+        </p>
         <div className="pt-2">
           <a
             href="/anup-kankale-resume.pdf"
@@ -111,7 +151,9 @@ function About() {
             {experience.map((job) => (
               <li key={`${job.company}-${job.period}`} className="relative">
                 <span className="absolute -left-[1.85rem] top-2 h-3 w-3 rounded-full border-2 border-background bg-accent md:-left-[2.35rem]" />
-                <p className="font-display text-xs tracking-widest text-muted-foreground">{job.period}</p>
+                <p className="font-display text-xs tracking-widest text-muted-foreground">
+                  {job.period}
+                </p>
                 <h3 className="mt-1 text-xl text-primary">
                   {job.role}{" "}
                   <span className="text-accent">
@@ -133,7 +175,10 @@ function About() {
                 <p className="text-sm text-muted-foreground">{job.location}</p>
                 <ul className="mt-3 space-y-2">
                   {job.points.map((point) => (
-                    <li key={point} className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
+                    <li
+                      key={point}
+                      className="flex gap-3 text-sm text-muted-foreground leading-relaxed"
+                    >
                       <span className="mt-2 inline-block h-1 w-1 shrink-0 rounded-full bg-accent" />
                       {point}
                     </li>
@@ -191,20 +236,37 @@ function About() {
         <div className="mx-auto max-w-6xl px-6 py-20 grid gap-12 md:grid-cols-2">
           <div>
             <p className="font-display text-sm tracking-widest text-accent">HOW I WORK</p>
-            <h2 className="mt-3 text-3xl text-primary md:text-4xl">Calm, clear, and shipped on time.</h2>
+            <h2 className="mt-3 text-3xl text-primary md:text-4xl">
+              Calm, clear, and shipped on time.
+            </h2>
           </div>
           <ul className="space-y-5">
             {[
-              ["Honest scoping", "I&apos;d rather tell you something is the wrong fit than over-promise."],
-              ["Plain-language updates", "No jargon walls. You&apos;ll always know what&apos;s happening and why."],
-              ["WordPress-first thinking", "I lean on the platform&apos;s strengths instead of fighting them."],
-              ["Built to hand off", "Clean code, documentation and editorial UX your team can actually maintain."],
+              [
+                "Honest scoping",
+                "I&apos;d rather tell you something is the wrong fit than over-promise.",
+              ],
+              [
+                "Plain-language updates",
+                "No jargon walls. You&apos;ll always know what&apos;s happening and why.",
+              ],
+              [
+                "WordPress-first thinking",
+                "I lean on the platform&apos;s strengths instead of fighting them.",
+              ],
+              [
+                "Built to hand off",
+                "Clean code, documentation and editorial UX your team can actually maintain.",
+              ],
             ].map(([h, b]) => (
               <li key={h} className="flex gap-4">
                 <span className="mt-1 inline-block h-2 w-2 shrink-0 rounded-full bg-accent" />
                 <div>
                   <p className="font-semibold text-primary">{h}</p>
-                  <p className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: b }} />
+                  <p
+                    className="text-sm text-muted-foreground"
+                    dangerouslySetInnerHTML={{ __html: b }}
+                  />
                 </div>
               </li>
             ))}
@@ -212,11 +274,24 @@ function About() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-20 text-center">
-        <h2 className="text-3xl text-primary md:text-4xl">Like what you read?</h2>
-        <p className="mt-3 text-muted-foreground">Tell me about your project. I read every message.</p>
-        <Link to="/contact" className="mt-6 inline-flex items-center justify-center rounded-full bg-accent px-7 py-3 text-sm font-semibold text-accent-foreground hover:opacity-90 transition">Get in touch →</Link>
-      </section>
+      <CtaCard
+        eyebrow="LIKE WHAT YOU READ?"
+        title={<>Let&apos;s build your next project together.</>}
+        body="WordPress, Nuxt.js, React or an AI feature you have been meaning to add. Tell me what you are building. I read every message and usually reply the same day."
+        className="pt-8"
+      >
+        <Link to="/contact" className={ctaPrimary}>
+          Get in touch <span aria-hidden="true">&#8594;</span>
+        </Link>
+        <a
+          href="/anup-kankale-resume.pdf"
+          target="_blank"
+          rel="noreferrer"
+          className={ctaSecondary}
+        >
+          Download résumé
+        </a>
+      </CtaCard>
     </>
   );
 }

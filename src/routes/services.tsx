@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
 import { pageHead } from "../lib/seo";
+import { CtaCard, ctaPrimary, ctaSecondary } from "../components/cta-card";
 import { listServices } from "../lib/wp/content.functions";
 import { normaliseStringList, plainText } from "../lib/wp/types";
 
@@ -90,8 +91,12 @@ function Services() {
     <>
       <PageHero
         eyebrow="SERVICES"
-        title={<>How I can <span className="text-accent">help you ship.</span></>}
-        lead="A short menu of the things I do most often. If your project doesn&apos;t quite fit a box, send me a note anyway. Most good work doesn&apos;t."
+        title={
+          <>
+            How I can <span className="text-accent">help you ship.</span>
+          </>
+        }
+        lead="A short menu of the things I do most often. If your project doesn't quite fit a box, send me a note anyway. Most good work doesn't."
       />
       <section className="mx-auto max-w-6xl px-6 py-20 grid gap-8 md:grid-cols-2">
         {groups.map((g) => (
@@ -101,9 +106,7 @@ function Services() {
             ) : (
               <h2 className="text-2xl text-primary">{g.title}</h2>
             )}
-            {g.summary ? (
-              <p className="mt-2 text-sm text-muted-foreground">{g.summary}</p>
-            ) : null}
+            {g.summary ? <p className="mt-2 text-sm text-muted-foreground">{g.summary}</p> : null}
             <ul className="mt-5 space-y-3">
               {g.items.map((i) => (
                 <li key={i} className="flex gap-3 text-sm text-muted-foreground">
@@ -121,11 +124,18 @@ function Services() {
         ))}
       </section>
 
-      <section className="mx-auto max-w-4xl px-6 pb-24 text-center">
-        <h2 className="text-3xl text-primary md:text-4xl">Not sure where to start?</h2>
-        <p className="mt-3 text-muted-foreground">A quick 20-minute call usually clears things up. No obligations, no pitch.</p>
-        <Link to="/contact" className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition">Book a chat →</Link>
-      </section>
+      <CtaCard
+        eyebrow="NOT SURE WHERE TO START?"
+        title={<>Tell me what you need. I&apos;ll point you the right way.</>}
+        body="A quick message usually clears things up. No obligations, no pitch, just an honest view of how I would approach it."
+      >
+        <Link to="/contact" className={ctaPrimary}>
+          Send me a message <span aria-hidden="true">&#8594;</span>
+        </Link>
+        <Link to="/projects" className={ctaSecondary}>
+          See my work
+        </Link>
+      </CtaCard>
     </>
   );
 }

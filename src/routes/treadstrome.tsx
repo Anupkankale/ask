@@ -9,23 +9,16 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { pageHead } from "../lib/seo";
+
 export const Route = createFileRoute("/treadstrome")({
-  head: () => ({
-    meta: [
-      { title: "Treadstrome — Trade your rules, not your feelings." },
-      {
-        name: "description",
-        content:
-          "Treadstrome is a personal trading terminal for Indian F&O. It watches only the setups you trade, alerts on high-conviction confluence, journals every decision, and reflects with AI. Join the early-access waitlist.",
-      },
-      { property: "og:title", content: "Treadstrome — Trade your rules, not your feelings." },
-      {
-        property: "og:description",
-        content: "A trading terminal that enforces discipline in code. Join the early-access waitlist.",
-      },
-      { property: "og:type", content: "website" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Treadstrome | Trade your rules, not your feelings.",
+      description:
+        "Treadstrome is a personal trading terminal for Indian F&O. It watches only the setups you trade, alerts on high-conviction confluence, journals every decision, and reflects with AI. Join the early-access waitlist.",
+      path: "/treadstrome",
+    }),
   component: TreadstromeLanding,
 });
 
@@ -36,7 +29,7 @@ const valueProps = [
   {
     icon: BellRing,
     title: "Silent until it matters",
-    body: "No blinking dashboards, no noise. Four detectors watch the market and only speak when your rules agree — most days, that's silence.",
+    body: "No blinking dashboards, no noise. Four detectors watch the market and only speak when your rules agree. Most days, that's silence.",
   },
   {
     icon: ShieldCheck,
@@ -51,21 +44,57 @@ const valueProps = [
   {
     icon: BrainCircuit,
     title: "AI that reflects, never trades",
-    body: "Claude reviews each trade against your rulebook and writes an honest weekly report — from your data, not your memory. It never touches an order.",
+    body: "Claude reviews each trade against your rulebook and writes an honest weekly report from your data, not your memory. It never touches an order.",
   },
 ];
 
 const setups = [
-  { grade: "A+", color: "oklch(0.6 0.18 155)", bg: "oklch(0.95 0.05 155)", title: "Confluence", body: "Sector, stock, chart and OI all agree. Rare, highest expectancy — full size." },
-  { grade: "A", color: "oklch(0.58 0.17 254)", bg: "oklch(0.95 0.04 254)", title: "Momentum", body: "A ±2% mover with OI agreement. The bread-and-butter setup — standard size." },
-  { grade: "B", color: "oklch(0.62 0.15 70)", bg: "oklch(0.95 0.05 80)", title: "Reversal", body: "Price action plus RSI divergence. Counter-trend, patient — smaller size." },
-  { grade: "C", color: "oklch(0.6 0.22 20)", bg: "oklch(0.95 0.04 20)", title: "Scalp", body: "Index expiry-day gamma, Tue/Thu only. Highest variance — smallest cap." },
+  {
+    grade: "A+",
+    color: "oklch(0.6 0.18 155)",
+    bg: "oklch(0.95 0.05 155)",
+    title: "Confluence",
+    body: "Sector, stock, chart and OI all agree. Rare, highest expectancy: full size.",
+  },
+  {
+    grade: "A",
+    color: "oklch(0.58 0.17 254)",
+    bg: "oklch(0.95 0.04 254)",
+    title: "Momentum",
+    body: "A ±2% mover with OI agreement. The bread-and-butter setup: standard size.",
+  },
+  {
+    grade: "B",
+    color: "oklch(0.62 0.15 70)",
+    bg: "oklch(0.95 0.05 80)",
+    title: "Reversal",
+    body: "Price action plus RSI divergence. Counter-trend, patient: smaller size.",
+  },
+  {
+    grade: "C",
+    color: "oklch(0.6 0.22 20)",
+    bg: "oklch(0.95 0.04 20)",
+    title: "Scalp",
+    body: "Index expiry-day gamma, Tue/Thu only. Highest variance: smallest cap.",
+  },
 ];
 
 const steps = [
-  { n: "01", title: "It watches", body: "Detectors poll the option chain every few seconds during market hours and grade every opportunity against your filters." },
-  { n: "02", title: "It alerts", body: "A single Telegram message when a setup clears its threshold. You get the grade, the filters and the level — nothing else." },
-  { n: "03", title: "You journal & reflect", body: "Log the trade in two taps. The risk engine keeps you honest; Claude reviews it and rolls it into your weekly report." },
+  {
+    n: "01",
+    title: "It watches",
+    body: "Detectors poll the option chain every few seconds during market hours and grade every opportunity against your filters.",
+  },
+  {
+    n: "02",
+    title: "It alerts",
+    body: "A single Telegram message when a setup clears its threshold. You get the grade, the filters and the level. Nothing else.",
+  },
+  {
+    n: "03",
+    title: "You journal & reflect",
+    body: "Log the trade in two taps. The risk engine keeps you honest; Claude reviews it and rolls it into your weekly report.",
+  },
 ];
 
 const audience = [
@@ -92,12 +121,23 @@ function TreadstromeLanding() {
             Treadstrome
           </span>
           <nav className="hidden items-center gap-7 text-[13.5px] font-medium text-muted-foreground md:flex">
-            <a href="#what" className="transition hover:text-foreground">What it is</a>
-            <a href="#how" className="transition hover:text-foreground">How it works</a>
-            <a href="#setups" className="transition hover:text-foreground">Setups</a>
-            <a href="#access" className="transition hover:text-foreground">Early access</a>
+            <a href="#what" className="transition hover:text-foreground">
+              What it is
+            </a>
+            <a href="#how" className="transition hover:text-foreground">
+              How it works
+            </a>
+            <a href="#setups" className="transition hover:text-foreground">
+              Setups
+            </a>
+            <a href="#access" className="transition hover:text-foreground">
+              Early access
+            </a>
           </nav>
-          <a href={WAITLIST} className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-[13.5px] font-medium text-accent-foreground transition hover:opacity-90">
+          <a
+            href={WAITLIST}
+            className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-[13.5px] font-medium text-accent-foreground transition hover:opacity-90"
+          >
             Join waitlist
           </a>
         </div>
@@ -117,13 +157,17 @@ function TreadstromeLanding() {
             <span className="text-accent">Not your feelings.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-xl leading-relaxed text-muted-foreground">
-            Treadstrome watches only the setups you actually trade, alerts you the moment your rules agree,
-            journals every decision, and reflects with AI at the end of each day. Built to make discipline the
-            default, not the exception.
+            Treadstrome watches only the setups you actually trade, alerts you the moment your rules
+            agree, journals every decision, and reflects with AI at the end of each day. Built to
+            make discipline the default, not the exception.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <a href={WAITLIST} className={ctaPrimary}>Get early access</a>
-            <a href="#how" className={ctaGhost}>See how it works</a>
+            <a href={WAITLIST} className={ctaPrimary}>
+              Get early access
+            </a>
+            <a href="#how" className={ctaGhost}>
+              See how it works
+            </a>
           </div>
           <p className="mt-5 text-[13px] text-muted-foreground">
             No card required · Built in public ·{" "}
@@ -138,12 +182,13 @@ function TreadstromeLanding() {
       <section className="mx-auto max-w-3xl px-6 py-20 text-center">
         <p className="text-sm font-semibold text-accent">The problem</p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-[2.5rem] md:leading-[1.1]">
-          Most retail accounts don&apos;t die from bad reads. They die from good reads, traded badly.
+          Most retail accounts don&apos;t die from bad reads. They die from good reads, traded
+          badly.
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
-          The data is fine. The chart is fine. What breaks is discipline under adrenaline — one extra trade,
-          one moved stop, one “just this once”. No indicator fixes that. Software that enforces your own rules
-          can.
+          The data is fine. The chart is fine. What breaks is discipline under adrenaline: one extra
+          trade, one moved stop, one “just this once”. No indicator fixes that. Software that
+          enforces your own rules can.
         </p>
       </section>
 
@@ -167,7 +212,9 @@ function TreadstromeLanding() {
                   <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10 text-accent transition group-hover:bg-accent group-hover:text-accent-foreground">
                     <Icon className="h-6 w-6" />
                   </span>
-                  <h3 className="mt-5 text-xl font-semibold tracking-tight text-foreground">{v.title}</h3>
+                  <h3 className="mt-5 text-xl font-semibold tracking-tight text-foreground">
+                    {v.title}
+                  </h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{v.body}</p>
                 </div>
               );
@@ -191,7 +238,9 @@ function TreadstromeLanding() {
           {steps.map((s) => (
             <div key={s.n} className="rounded-3xl border border-border bg-background p-8 shadow-sm">
               <span className="font-mono text-sm font-bold text-accent">{s.n}</span>
-              <h3 className="mt-3 text-xl font-semibold tracking-tight text-foreground">{s.title}</h3>
+              <h3 className="mt-3 text-xl font-semibold tracking-tight text-foreground">
+                {s.title}
+              </h3>
               <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{s.body}</p>
             </div>
           ))}
@@ -207,13 +256,16 @@ function TreadstromeLanding() {
               Four setups, graded and sized for you.
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Every alert carries a grade. The grade decides the size and the risk cap — so the rare, high-conviction
-              trade gets respected and the marginal one stays small.
+              Every alert carries a grade. The grade decides the size and the risk cap, so the rare,
+              high-conviction trade gets respected and the marginal one stays small.
             </p>
           </div>
           <div className="mt-12 grid gap-3 sm:grid-cols-2">
             {setups.map((s) => (
-              <div key={s.title} className="flex items-start gap-4 rounded-2xl border border-border bg-background p-5 shadow-sm">
+              <div
+                key={s.title}
+                className="flex items-start gap-4 rounded-2xl border border-border bg-background p-5 shadow-sm"
+              >
                 <span
                   className="flex h-11 min-w-11 items-center justify-center rounded-xl px-3 text-base font-bold"
                   style={{ color: s.color, backgroundColor: s.bg }}
@@ -222,7 +274,9 @@ function TreadstromeLanding() {
                 </span>
                 <div>
                   <p className="text-[15px] font-semibold text-foreground">{s.title}</p>
-                  <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{s.body}</p>
+                  <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">
+                    {s.body}
+                  </p>
                 </div>
               </div>
             ))}
@@ -236,12 +290,15 @@ function TreadstromeLanding() {
           <div>
             <p className="text-sm font-semibold text-accent">Who it&apos;s for</p>
             <h2 className="mt-3 text-4xl font-semibold tracking-tight text-foreground md:text-[3rem] md:leading-[1.08]">
-              For traders who already have an edge — and want to stop giving it back.
+              For traders who already have an edge and want to stop giving it back.
             </h2>
           </div>
           <ul className="space-y-4">
             {audience.map((a) => (
-              <li key={a} className="flex items-start gap-3 text-lg leading-relaxed text-muted-foreground">
+              <li
+                key={a}
+                className="flex items-start gap-3 text-lg leading-relaxed text-muted-foreground"
+              >
                 <span className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
                   <Check className="h-4 w-4" />
                 </span>
@@ -266,8 +323,8 @@ function TreadstromeLanding() {
               Be first on the terminal.
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg text-white/85">
-              Treadstrome is being built in public, one weekend at a time. Join the waitlist to shape the early
-              build, lock in founding-user pricing, and get in the day it opens.
+              Treadstrome is being built in public, one weekend at a time. Join the waitlist to
+              shape the early build, lock in founding-user pricing, and get in the day it opens.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
@@ -290,8 +347,14 @@ function TreadstromeLanding() {
       {/* FOOTER */}
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-5xl flex-col justify-between gap-3 px-6 py-10 text-[13px] text-muted-foreground sm:flex-row">
-          <span>Treadstrome · a personal terminal, built in public. Not a signal service. Not investment advice.</span>
-          <a href="https://anupkankale.com" className="text-muted-foreground transition hover:text-foreground">
+          <span>
+            Treadstrome · a personal terminal, built in public. Not a signal service. Not investment
+            advice.
+          </span>
+          <a
+            href="https://anupkankale.com"
+            className="text-muted-foreground transition hover:text-foreground"
+          >
             by anupkankale.com
           </a>
         </div>

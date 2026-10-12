@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
 import { pageHead } from "../lib/seo";
+import { CtaCard, ctaPrimary, ctaSecondary } from "../components/cta-card";
 import { listPosts } from "../lib/wp/content.functions";
 import { fallbackPosts } from "../lib/wp/fallback-posts";
 import { getFeaturedImage, getAcfImage, plainText } from "../lib/wp/types";
@@ -47,7 +48,11 @@ function Blog() {
     <>
       <PageHero
         eyebrow="BLOG"
-        title={<>Notes from the <span className="text-accent">WordPress &amp; AI world.</span></>}
+        title={
+          <>
+            Notes from the <span className="text-accent">WordPress &amp; AI world.</span>
+          </>
+        }
         lead="A slow blog. I write roughly every couple of weeks about things I actually use at work."
       />
       <section className="mx-auto max-w-6xl px-6 py-20">
@@ -65,7 +70,7 @@ function Blog() {
                 {cover ? (
                   <img
                     src={cover}
-                    alt=""
+                    alt={plainText(post.title.rendered, 200)}
                     loading="lazy"
                     className="aspect-[16/9] w-full object-cover"
                   />
@@ -95,6 +100,19 @@ function Blog() {
           })}
         </div>
       </section>
+
+      <CtaCard
+        eyebrow="ENJOYED THE NOTES?"
+        title="Have a problem like these?"
+        body="Most of these posts started as a real client problem. If you have one of your own, I would like to hear about it."
+      >
+        <Link to="/contact" className={ctaPrimary}>
+          Start a conversation <span aria-hidden="true">&#8594;</span>
+        </Link>
+        <Link to="/projects" className={ctaSecondary}>
+          See my work
+        </Link>
+      </CtaCard>
     </>
   );
 }

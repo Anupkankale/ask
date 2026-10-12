@@ -1,14 +1,14 @@
-# Anup Kankale — Personal Portfolio
+# Anup Kankale: Personal Portfolio
 
 > Freelance WordPress Developer & AI Integration Specialist  
-> Live site: [anupkankale.lovable.app](https://anupkankale.lovable.app)
+> Live site: [anupkankale.com](https://anupkankale.com)
 
 A fast, modern portfolio website built with **TanStack Start**, **React 19**, **Tailwind CSS v4**, and **shadcn/ui**. Designed to showcase services, projects, blog posts, and make it easy for potential clients to get in touch.
 
 The site runs as a **headless frontend** powered by a self-hosted WordPress
 backend (REST API + ACF). Content for the blog, projects, and services is
-edited in WP and fetched server-side. The contact form posts back to WP as
-private submissions. See [`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md) for the
+edited in WP and fetched server-side. Contact is handled by WhatsApp and email
+links; there is no form. See [`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md) for the
 one-time WP setup steps.
 
 ---
@@ -40,9 +40,12 @@ src/
     about.tsx          # About page
     services.tsx       # Services overview
     projects.tsx       # Project showcase
-    blog.tsx           # Blog / articles
-    contact.tsx        # Contact form
+    blog.index.tsx     # Blog listing
+    blog.$slug.tsx     # Single post
+    contact.tsx        # WhatsApp + email contact page
+    treadstrome*.tsx   # Treadstrome landing page and build plan
     sitemap[.]xml.ts   # Dynamic sitemap.xml route
+    robots[.]txt.ts    # Dynamic robots.txt route
     __root.tsx         # Root layout (head, providers)
   components/          # Reusable UI components
   assets/              # Images, fonts, static files
@@ -86,25 +89,17 @@ npm install
 ### 3. Environment variables
 
 The frontend reads its content from a WordPress backend. For full
-functionality (blog, projects, services, contact form), set these in a
+functionality (blog, projects, services), set these in a
 `.env` file at the project root:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `WP_API_URL` | yes | Base URL of your WP REST API, e.g. `https://yoursite.com/wp-json` |
-| `WP_APP_USER` | for contact form | Your WordPress username |
-| `WP_APP_PASSWORD` | for contact form | An Application Password (Users → Profile → Application Passwords) |
+| `VITE_SITE_URL` | in production | Public origin used for canonicals, og:url and the sitemap, e.g. `https://anupkankale.com` |
 
-Without `WP_API_URL`, the site still runs — blog/projects/services show
-fallback content and the contact form returns a friendly "backend not
-connected" error. See [`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md) for the
+Without `WP_API_URL`, the site still runs: blog, projects and services show
+fallback content. See [`WORDPRESS_SETUP.md`](./WORDPRESS_SETUP.md) for the
 full WP-side setup (plugins, CPTs, ACF fields, CORS snippet).
-
-```bash
-# Example — only needed once you add external services
-DATABASE_URL=your_database_url
-STRIPE_SECRET_KEY=your_stripe_key
-```
 
 > **Important:** Public values that must reach the browser must use the `VITE_` prefix (e.g., `VITE_PUBLIC_URL`). Never put secrets in `VITE_` variables — they ship to the client.
 
@@ -173,12 +168,12 @@ The preview server also starts on `http://localhost:8080` (or the next available
 
 ## Key Features
 
-- **Headless WordPress backend** — Blog, Projects, and Services are managed in WP and exposed via REST + ACF
-- **Dynamic blog** — List + single-post pages (`/blog`, `/blog/$slug`) with featured images and ACF fields
-- **Projects & Services** — Custom Post Types in WP with rich ACF fields (tech stack, gallery, features, pricing)
-- **Contact form** — React Hook Form + Zod, server-side validation, saves submissions to WP as private posts, honeypot anti-spam
-- **SEO** — Semantic HTML, meta tags, Open Graph, dynamic `sitemap.xml`
-- **Graceful fallbacks** — Site renders cleanly even before WP is connected
+- **Headless WordPress backend:** Blog, Projects, and Services are managed in WP and exposed via REST + ACF
+- **Dynamic blog:** List + single-post pages (`/blog`, `/blog/$slug`) with featured images and ACF fields
+- **Projects & Services:** Custom Post Types in WP with rich ACF fields (tech stack, gallery, features, pricing)
+- **Contact:** WhatsApp click-to-chat plus email, no form to spam
+- **SEO:** Semantic HTML, meta tags, Open Graph, JSON-LD, dynamic `sitemap.xml` and `robots.txt`
+- **Graceful fallbacks:** Site renders cleanly even before WP is connected
 
 ---
 
@@ -189,4 +184,4 @@ This project is personal and proprietary. All rights reserved.
 ---
 
 **Built with care by Anup Kankale.**  
-Want to work together? [Get in touch](https://anupkankale.lovable.app/contact).
+Want to work together? [Get in touch](https://anupkankale.com/contact).

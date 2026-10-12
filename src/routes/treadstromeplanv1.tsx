@@ -1,21 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Bell, BookOpen, Brain, ShieldCheck } from "lucide-react";
 
+import { pageHead } from "../lib/seo";
+
 export const Route = createFileRoute("/treadstromeplanv1")({
-  head: () => ({
-    meta: [
-      { title: "Treadstrome — Build Plan v1 (technical)" },
-      {
-        name: "description",
-        content:
-          "A personal trading terminal for Indian F&O — four setups, one ledger, discipline enforced in code. An upcoming project by Anup Kankale.",
-      },
-      // Hidden, unannounced project — keep it out of search engines.
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Treadstrome" },
-      { property: "og:description", content: "A personal trading terminal, built in public." },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Treadstrome | Build Plan v1 (technical)",
+      description:
+        "A personal trading terminal for Indian F&O: four setups, one ledger, discipline enforced in code. An upcoming project by Anup Kankale.",
+      path: "/treadstromeplanv1",
+      // Hidden, unannounced project; keep it out of search engines.
+      noindex: true,
+    }),
   component: Treadstrome,
 });
 
@@ -42,7 +39,7 @@ const modules = [
     icon: Brain,
     label: "Module 04",
     title: "Reflection",
-    body: "Claude Haiku reviews each trade against the rulebook. A larger model writes the weekly report — from data, not memory.",
+    body: "Claude Haiku reviews each trade against the rulebook. A larger model writes the weekly report from data, not memory.",
   },
 ];
 
@@ -137,7 +134,10 @@ function Treadstrome() {
       {/* Minimal standalone top bar — intentionally not the portfolio nav */}
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-12 max-w-3xl items-center justify-between px-6">
-          <Link to="/treadstrome" className="flex items-center gap-2 text-[17px] font-semibold tracking-tight text-foreground">
+          <Link
+            to="/treadstrome"
+            className="flex items-center gap-2 text-[17px] font-semibold tracking-tight text-foreground"
+          >
             <span className="h-2 w-2 rounded-[2px] bg-[oklch(0.6_0.18_155)]" />
             Treadstrome
             <span className="ml-1 rounded-full border border-border px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
@@ -145,11 +145,21 @@ function Treadstrome() {
             </span>
           </Link>
           <nav className="hidden items-center gap-6 text-[13px] font-medium text-muted-foreground sm:flex">
-            <a href="#thesis" className="transition hover:text-foreground">Thesis</a>
-            <a href="#modules" className="transition hover:text-foreground">Modules</a>
-            <a href="#setups" className="transition hover:text-foreground">Setups</a>
-            <a href="#stack" className="transition hover:text-foreground">Stack</a>
-            <Link to="/treadstrome" className="text-accent transition hover:underline">← Product</Link>
+            <a href="#thesis" className="transition hover:text-foreground">
+              Thesis
+            </a>
+            <a href="#modules" className="transition hover:text-foreground">
+              Modules
+            </a>
+            <a href="#setups" className="transition hover:text-foreground">
+              Setups
+            </a>
+            <a href="#stack" className="transition hover:text-foreground">
+              Stack
+            </a>
+            <Link to="/treadstrome" className="text-accent transition hover:underline">
+              ← Product
+            </Link>
           </nav>
         </div>
       </header>
@@ -163,9 +173,9 @@ function Treadstrome() {
             The software my <span className="text-accent">2023 notebook</span> was begging for.
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Treadstrome watches four setups I actually trade, fires only when the rules I actually wrote
-            agree, journals every decision, and reflects with Claude at day and week end. Built for one
-            trader &mdash; me &mdash; first.
+            Treadstrome watches four setups I actually trade, fires only when the rules I actually
+            wrote agree, journals every decision, and reflects with Claude at day and week end.
+            Built for one trader, me, first.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
@@ -188,11 +198,12 @@ function Treadstrome() {
               Origin note · 16 May 2023
             </figcaption>
             <blockquote className="mt-3 text-lg italic leading-relaxed text-foreground/90">
-              &ldquo;Believe in price action · Take only 2 trades of target or SL · Check OI build-up on the
-              side for buy · Always choose in-the-money &mdash; ATM has highest time value.&rdquo;
+              &ldquo;Believe in price action · Take only 2 trades of target or SL · Check OI
+              build-up on the side for buy · Always choose in-the-money: ATM has highest time
+              value.&rdquo;
             </blockquote>
             <p className="mt-3 text-[13px] text-muted-foreground">
-              &mdash; pen-and-paper OI tracking, three years before the app existed
+              Pen-and-paper OI tracking, three years before the app existed
             </p>
           </figure>
         </div>
@@ -206,22 +217,24 @@ function Treadstrome() {
         </h2>
         <div className="mt-6 space-y-4 text-[17px] leading-relaxed text-muted-foreground">
           <p>
-            Most trading tools show you data and let you decide. That&apos;s how most retail accounts die
-            &mdash; the data is fine, the decisions aren&apos;t. The gap between{" "}
+            Most trading tools show you data and let you decide. That&apos;s how most retail
+            accounts die: the data is fine, the decisions aren&apos;t. The gap between{" "}
             <span className="text-foreground">&ldquo;correct market reading&rdquo;</span> and{" "}
-            <span className="text-foreground">&ldquo;a P&amp;L that survives&rdquo;</span> is discipline under
-            adrenaline, and no chart fixes that.
+            <span className="text-foreground">&ldquo;a P&amp;L that survives&rdquo;</span> is
+            discipline under adrenaline, and no chart fixes that.
           </p>
           <p>
-            Treadstrome is the opposite bet. The reading is already done &mdash; encoded as four setup
-            detectors that only fire when the filters agree. The discipline is enforced in code &mdash; a
-            risk engine that refuses to log a trade above the grade&apos;s premium cap. What&apos;s left for
-            the trader is the one thing software can&apos;t do: press the button and honor the exit.
+            Treadstrome is the opposite bet. The reading is already done, encoded as four setup
+            detectors that only fire when the filters agree. The discipline is enforced in code: a
+            risk engine that refuses to log a trade above the grade&apos;s premium cap. What&apos;s
+            left for the trader is the one thing software can&apos;t do: press the button and honor
+            the exit.
           </p>
           <p>
-            The result is boring, on purpose. Most trading days, the app shows nothing. The occasional green
-            light &mdash; <span className="text-foreground">Confluence</span>, when sector, stock, chart and
-            OI all agree &mdash; is worth waiting for precisely because it&apos;s rare.
+            The result is boring, on purpose. Most trading days, the app shows nothing. The
+            occasional green light, <span className="text-foreground">Confluence</span>, when
+            sector, stock, chart and OI all agree, is worth waiting for precisely because it&apos;s
+            rare.
           </p>
         </div>
       </section>
@@ -247,7 +260,9 @@ function Treadstrome() {
                   <p className="mt-5 text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
                     {m.label}
                   </p>
-                  <h3 className="mt-1 text-xl font-semibold tracking-tight text-foreground">{m.title}</h3>
+                  <h3 className="mt-1 text-xl font-semibold tracking-tight text-foreground">
+                    {m.title}
+                  </h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{m.body}</p>
                 </div>
               );
@@ -311,7 +326,9 @@ function Treadstrome() {
                 </span>
                 <div>
                   <p className="text-[15px] font-semibold text-foreground">{r.title}</p>
-                  <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{r.body}</p>
+                  <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">
+                    {r.body}
+                  </p>
                 </div>
               </div>
             ))}
@@ -330,7 +347,10 @@ function Treadstrome() {
         </p>
         <dl className="mt-10 rounded-3xl border border-border bg-card p-7 font-mono text-[13.5px] leading-loose">
           {stack.map(([k, v]) => (
-            <div key={k} className="flex flex-col gap-0.5 border-b border-border/60 py-2 last:border-0 sm:flex-row sm:gap-4">
+            <div
+              key={k}
+              className="flex flex-col gap-0.5 border-b border-border/60 py-2 last:border-0 sm:flex-row sm:gap-4"
+            >
               <dt className="w-32 shrink-0 text-muted-foreground">{k}</dt>
               <dd className="text-foreground">{v}</dd>
             </div>
@@ -339,7 +359,9 @@ function Treadstrome() {
 
         {/* Non-negotiables */}
         <div className="mt-8 rounded-3xl bg-foreground p-8 text-background">
-          <h3 className="text-xl font-semibold tracking-tight text-background">Five non-negotiables</h3>
+          <h3 className="text-xl font-semibold tracking-tight text-background">
+            Five non-negotiables
+          </h3>
           <ol className="mt-5 space-y-3 text-[14.5px]">
             {rules.map(([head, tail], i) => (
               <li key={head} className="flex gap-3">
@@ -357,7 +379,8 @@ function Treadstrome() {
       {/* FOOTER */}
       <footer className="border-t border-border">
         <div className="mx-auto max-w-4xl px-6 py-10 text-[13px] text-muted-foreground">
-          Treadstrome · a personal terminal, built in public. Not a signal service. Not investment advice.
+          Treadstrome · a personal terminal, built in public. Not a signal service. Not investment
+          advice.
         </div>
       </footer>
     </div>

@@ -151,7 +151,9 @@
     font-feature-settings: "ss01", "cv11";
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
     line-height: 1.05;
@@ -175,16 +177,32 @@
  * loop is seamless. Fades at both edges hide the wrap point.
  */
 @keyframes marquee-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-100%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
 }
 
 .marquee {
   display: flex;
   overflow: hidden;
   user-select: none;
-  -webkit-mask-image: linear-gradient(to right, transparent, black 6rem, black calc(100% - 6rem), transparent);
-  mask-image: linear-gradient(to right, transparent, black 6rem, black calc(100% - 6rem), transparent);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6rem,
+    black calc(100% - 6rem),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6rem,
+    black calc(100% - 6rem),
+    transparent
+  );
 }
 
 .marquee-track {
@@ -258,8 +276,12 @@
   padding-left: 1.5rem;
 }
 
-.post-body ul { list-style: disc; }
-.post-body ol { list-style: decimal; }
+.post-body ul {
+  list-style: disc;
+}
+.post-body ol {
+  list-style: decimal;
+}
 
 .post-body li::marker {
   color: var(--accent);

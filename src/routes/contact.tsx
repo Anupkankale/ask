@@ -23,19 +23,34 @@ const WHATSAPP_URL =
 const links = [
   { label: "WhatsApp", value: WHATSAPP_DISPLAY, href: WHATSAPP_URL },
   { label: "Email", value: "anupkankaleak47@gmail.com", href: "mailto:anupkankaleak47@gmail.com" },
-  { label: "WordPress.org", value: "profiles.wordpress.org/anupkankale", href: "https://profiles.wordpress.org/anupkankale/" },
-  { label: "LinkedIn", value: "in.linkedin.com/in/anupkankale", href: "https://in.linkedin.com/in/anupkankale" },
-  { label: "Gravatar", value: "gravatar.com/anupkankale", href: "https://gravatar.com/anupkankale" },
+  {
+    label: "WordPress.org",
+    value: "profiles.wordpress.org/anupkankale",
+    href: "https://profiles.wordpress.org/anupkankale/",
+  },
+  {
+    label: "LinkedIn",
+    value: "in.linkedin.com/in/anupkankale",
+    href: "https://in.linkedin.com/in/anupkankale",
+  },
+  {
+    label: "Gravatar",
+    value: "gravatar.com/anupkankale",
+    href: "https://gravatar.com/anupkankale",
+  },
 ];
-
 
 function Contact() {
   return (
     <>
       <PageHero
         eyebrow="CONTACT"
-        title={<>Let&apos;s talk about your <span className="text-accent">next project.</span></>}
-        lead="Tell me what you&apos;re building. WhatsApp is the quickest way to reach me."
+        title={
+          <>
+            Let&apos;s talk about your <span className="text-accent">next project.</span>
+          </>
+        }
+        lead="Tell me what you're building. WhatsApp is the quickest way to reach me."
       />
       <section className="mx-auto max-w-6xl px-6 py-20 grid gap-12 md:grid-cols-[1fr_1.2fr]">
         <div className="space-y-6">
@@ -48,7 +63,9 @@ function Contact() {
                 rel="noreferrer"
                 className="block rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-0.5 hover:border-accent"
               >
-                <p className="font-display text-xs tracking-widest text-accent">{l.label.toUpperCase()}</p>
+                <p className="font-display text-xs tracking-widest text-accent">
+                  {l.label.toUpperCase()}
+                </p>
                 <p className="mt-1 text-primary font-medium break-all">{l.value}</p>
               </a>
             ))}
@@ -59,11 +76,13 @@ function Contact() {
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-6 md:p-10">
-          <p className="font-display text-xs tracking-widest text-accent">FASTEST WAY TO REACH ME</p>
+          <p className="font-display text-xs tracking-widest text-accent">
+            FASTEST WAY TO REACH ME
+          </p>
           <h2 className="mt-3 text-3xl text-primary md:text-4xl">Message me on WhatsApp.</h2>
           <p className="mt-4 text-muted-foreground leading-relaxed">
-            Tell me what you are building and I will come back to you, usually the same day. No form to fill
-            in, no waiting on an inbox.
+            Tell me what you are building and I will come back to you, usually the same day. No form
+            to fill in, no waiting on an inbox.
           </p>
 
           <a
@@ -77,7 +96,10 @@ function Contact() {
 
           <p className="mt-5 text-sm text-muted-foreground">
             Or save the number:{" "}
-            <a href={`tel:${WHATSAPP_NUMBER}`} className="font-medium text-primary hover:text-accent">
+            <a
+              href={`tel:${WHATSAPP_NUMBER}`}
+              className="font-medium text-primary hover:text-accent"
+            >
               {WHATSAPP_DISPLAY}
             </a>
           </p>

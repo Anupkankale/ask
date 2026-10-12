@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero } from "../components/page-hero";
 import { pageHead } from "../lib/seo";
+import { CtaCard, ctaPrimary, ctaSecondary } from "../components/cta-card";
 import { listProjects } from "../lib/wp/content.functions";
 import { getFeaturedImage, normaliseStringList, plainText } from "../lib/wp/types";
 
@@ -94,40 +95,68 @@ function Projects() {
     <>
       <PageHero
         eyebrow="SELECTED WORK"
-        title={<>A few things I&apos;ve <span className="text-accent">shipped.</span></>}
-        lead="A small sample of recent client and open-source work. Want more detail on any of these? Reach out and I&apos;ll happily walk you through them."
+        title={
+          <>
+            A few things I&apos;ve <span className="text-accent">shipped.</span>
+          </>
+        }
+        lead="A small sample of recent client and open-source work. Want more detail on any of these? Reach out and I'll happily walk you through them."
       />
       <section className="mx-auto max-w-6xl px-6 py-20 grid gap-6 md:grid-cols-2">
         {items.map((p) => (
-          <article key={p.id} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 transition hover:-translate-y-1 hover:border-accent">
+          <article
+            key={p.id}
+            className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 transition hover:-translate-y-1 hover:border-accent"
+          >
             <p className="font-display text-xs tracking-widest text-accent">{p.tag}</p>
             {p.isHtml ? (
-              <h2 className="mt-3 text-2xl text-primary" dangerouslySetInnerHTML={{ __html: p.title }} />
+              <h2
+                className="mt-3 text-2xl text-primary"
+                dangerouslySetInnerHTML={{ __html: p.title }}
+              />
             ) : (
               <h2 className="mt-3 text-2xl text-primary">{p.title}</h2>
             )}
             {p.cover ? (
-              <img src={p.cover} alt="" loading="lazy" className="mt-4 aspect-[16/9] w-full rounded-xl object-cover" />
+              <img
+                src={p.cover}
+                alt=""
+                loading="lazy"
+                className="mt-4 aspect-[16/9] w-full rounded-xl object-cover"
+              />
             ) : null}
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{p.body}</p>
             {p.tech.length > 0 ? (
               <ul className="mt-4 flex flex-wrap gap-2">
                 {p.tech.map((t) => (
-                  <li key={t} className="rounded-full border border-border bg-background px-2.5 py-1 text-xs text-muted-foreground">
+                  <li
+                    key={t}
+                    className="rounded-full border border-border bg-background px-2.5 py-1 text-xs text-muted-foreground"
+                  >
                     {t}
                   </li>
                 ))}
               </ul>
             ) : null}
-            {(p.liveUrl || p.repoUrl) ? (
+            {p.liveUrl || p.repoUrl ? (
               <div className="mt-5 flex gap-3 text-xs font-semibold">
                 {p.liveUrl ? (
-                  <a href={p.liveUrl} target="_blank" rel="noreferrer" className="text-accent hover:underline">
+                  <a
+                    href={p.liveUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-accent hover:underline"
+                  >
                     Live →
                   </a>
                 ) : null}
                 {p.repoUrl ? (
-                  <a href={p.repoUrl} target="_blank" rel="noreferrer" className="text-accent hover:underline">
+                  <a
+                    href={p.repoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-accent hover:underline"
+                  >
                     Repo →
                   </a>
                 ) : null}
@@ -136,10 +165,18 @@ function Projects() {
           </article>
         ))}
       </section>
-      <section className="mx-auto max-w-4xl px-6 pb-24 text-center">
-        <h2 className="text-3xl text-primary md:text-4xl">Have a project in mind?</h2>
-        <Link to="/contact" className="mt-6 inline-flex items-center justify-center rounded-full bg-accent px-7 py-3 text-sm font-semibold text-accent-foreground hover:opacity-90 transition">Let&apos;s talk →</Link>
-      </section>
+      <CtaCard
+        eyebrow="HAVE A PROJECT IN MIND?"
+        title={<>Let&apos;s make yours the next one on this page.</>}
+        body="WordPress, Nuxt.js, React or AI. Tell me what you are building and I will tell you honestly how I would approach it."
+      >
+        <Link to="/contact" className={ctaPrimary}>
+          Let&apos;s talk <span aria-hidden="true">&#8594;</span>
+        </Link>
+        <Link to="/services" className={ctaSecondary}>
+          What I offer
+        </Link>
+      </CtaCard>
     </>
   );
 }
