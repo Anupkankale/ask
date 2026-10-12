@@ -7,6 +7,7 @@ import heroWebp480 from "../assets/anup-hero-wordcamp-480.webp";
 import heroWebp720 from "../assets/anup-hero-wordcamp-720.webp";
 import heroWebp900 from "../assets/anup-hero-wordcamp-900.webp";
 import { pageHead } from "../lib/seo";
+import { YouTubeFacade } from "../components/youtube-facade";
 import { CtaCard, ctaPrimary, ctaSecondary } from "../components/cta-card";
 
 export const Route = createFileRoute("/")({
@@ -260,7 +261,7 @@ function Home() {
                 key={s.title}
                 className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-1 hover:border-accent hover:shadow-[0_20px_40px_-20px_oklch(0.7_0.21_25/0.4)]"
               >
-                <span className="font-display text-4xl text-muted-foreground/30">0{i + 1}</span>
+                <span className="font-display text-4xl text-muted-foreground/80">0{i + 1}</span>
                 <h3 className="mt-2 text-xl text-primary">{s.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{s.body}</p>
               </div>
@@ -364,14 +365,7 @@ function Home() {
                 className="overflow-hidden rounded-2xl border border-border bg-card"
               >
                 <div className="aspect-video w-full bg-primary/5">
-                  <iframe
-                    src={`https://www.youtube-nocookie.com/embed/${video.id}`}
-                    title={video.title}
-                    loading="lazy"
-                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    className="h-full w-full border-0"
-                  />
+                  <YouTubeFacade id={video.id} title={video.title} />
                 </div>
                 <div className="p-5">
                   <h3 className="text-lg text-primary leading-snug">{video.title}</h3>
