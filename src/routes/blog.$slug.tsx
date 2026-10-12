@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import type { ErrorComponentProps } from "@tanstack/react-router";
 import { pageHead } from "../lib/seo";
 import { CtaCard, ctaPrimary, ctaSecondary } from "../components/cta-card";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
@@ -6,7 +7,7 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { getPostBySlug } from "../lib/wp/content.functions";
 import { findFallbackPost, fallbackOgImage, fallbackPostSource } from "../lib/wp/fallback-posts";
 import { absoluteUrl, SITE_NAME, SITE_URL } from "../lib/seo";
-import { getFeaturedImage, getAcfImage, plainText } from "../lib/wp/types";
+import { getFeaturedImage, getAcfImage, plainText, type WPPost } from "../lib/wp/types";
 
 const postQueryOptions = (slug: string) =>
   queryOptions({
@@ -16,7 +17,9 @@ const postQueryOptions = (slug: string) =>
   });
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: async ({ params, context }) => {
+  // Annotated: inference through the server function otherwise leaves
+  // head()'s loaderData typed as never.
+  loader: async ({ params, context }): Promise<{ post: WPPost }> => {
     const wpPost = await context.queryClient.ensureQueryData(postQueryOptions(params.slug));
     const post = wpPost ?? findFallbackPost(params.slug);
     if (!post) throw notFound();
@@ -279,7 +282,7 @@ function PostNotFound() {
   );
 }
 
-function PostError({ error, reset }: { error: Error; reset: () => void }) {
+function PostError({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
   console.error(error);
   return (
