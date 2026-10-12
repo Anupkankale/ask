@@ -1,6 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import anupHeroJpg from "../assets/anup-hero-wordcamp.jpg";
-import anupHeroWebp from "../assets/anup-hero-wordcamp.webp";
+import heroAvif480 from "../assets/anup-hero-wordcamp-480.avif";
+import heroAvif720 from "../assets/anup-hero-wordcamp-720.avif";
+import heroAvif900 from "../assets/anup-hero-wordcamp-900.avif";
+import heroWebp480 from "../assets/anup-hero-wordcamp-480.webp";
+import heroWebp720 from "../assets/anup-hero-wordcamp-720.webp";
+import heroWebp900 from "../assets/anup-hero-wordcamp-900.webp";
 import { pageHead } from "../lib/seo";
 import { CtaCard, ctaPrimary, ctaSecondary } from "../components/cta-card";
 
@@ -14,6 +19,8 @@ export const Route = createFileRoute("/")({
     }),
   component: Home,
 });
+
+const HERO_SIZES = "(min-width: 768px) 448px, calc(100vw - 48px)";
 
 const services = [
   {
@@ -146,7 +153,7 @@ function MarqueeTrack({ "aria-hidden": ariaHidden }: { "aria-hidden"?: boolean }
       {marqueeItems.map((item) => (
         <span key={item} className="flex items-center gap-10">
           {item}
-          <span className="text-accent">★</span>
+          <span className="text-accent-bright">★</span>
         </span>
       ))}
     </div>
@@ -203,15 +210,26 @@ function Home() {
             </div>
             <div className="relative">
               <div className="absolute inset-0 -z-10 mx-auto h-[420px] w-[420px] max-w-full rounded-full bg-[radial-gradient(circle_at_center,_var(--highlight),_transparent_65%)] blur-2xl" />
+              {/* The LCP element. Phones get the 480/720 widths instead of the
+                  full 900px file; sizes mirrors the max-w-md cap and the
+                  px-6 gutters below md. */}
               <picture>
-                <source srcSet={anupHeroWebp} type="image/webp" />
+                <source
+                  type="image/avif"
+                  srcSet={`${heroAvif480} 480w, ${heroAvif720} 720w, ${heroAvif900} 900w`}
+                  sizes={HERO_SIZES}
+                />
+                <source
+                  type="image/webp"
+                  srcSet={`${heroWebp480} 480w, ${heroWebp720} 720w, ${heroWebp900} 900w`}
+                  sizes={HERO_SIZES}
+                />
                 <img
                   src={anupHeroJpg}
                   alt="Anup Kankale speaking at a WordCamp, standing at a WordPress-branded podium"
                   width={900}
                   height={1126}
                   fetchPriority="high"
-                  decoding="async"
                   className="mx-auto w-full max-w-md rounded-3xl object-cover shadow-[0_30px_60px_-30px_oklch(0.28_0.11_265/0.55)]"
                 />
               </picture>
@@ -253,7 +271,7 @@ function Home() {
         <section className="bg-primary text-primary-foreground">
           <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-[1fr_1.2fr] md:items-center">
             <div>
-              <p className="font-display text-sm tracking-widest text-accent">
+              <p className="font-display text-sm tracking-widest text-accent-bright">
                 A LITTLE BIT ABOUT ME
               </p>
               <h2 className="mt-3 text-4xl md:text-5xl">Open source is where I feel at home.</h2>
@@ -272,7 +290,7 @@ function Home() {
               </p>
               <Link
                 to="/about"
-                className="inline-flex items-center gap-2 font-semibold text-accent hover:underline"
+                className="inline-flex items-center gap-2 font-semibold text-accent-bright hover:underline"
               >
                 Read more about me →
               </Link>
@@ -366,7 +384,8 @@ function Home() {
                     rel="noreferrer"
                     className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline"
                   >
-                    Watch on YouTube <span aria-hidden="true">&#8594;</span>
+                    Watch on YouTube<span className="sr-only">: {video.title}</span>{" "}
+                    <span aria-hidden="true">&#8594;</span>
                   </a>
                 </div>
               </article>

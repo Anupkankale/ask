@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 
-import { cn } from "@/lib/utils";
-
 // Shared button styles so every CTA card's actions read the same.
 export const ctaPrimary =
   "inline-flex items-center justify-center rounded-full bg-accent px-7 py-3 text-sm font-semibold text-accent-foreground transition hover:opacity-90";
@@ -26,13 +24,15 @@ export function CtaCard({
   className?: string;
 }) {
   return (
-    <section className={cn("mx-auto max-w-6xl px-6 pb-24", className)}>
+    // Plain joins rather than cn(): cn pulls tailwind-merge (~25 KB) into the
+    // client bundle, and these classes never conflict.
+    <section className={`mx-auto max-w-6xl px-6 pb-24 ${className ?? ""}`}>
       <div className="relative overflow-hidden rounded-3xl bg-[oklch(0.96_0.04_80)] p-10 md:p-16">
         <div className="relative z-10 max-w-2xl">
           {eyebrow ? (
             <p className="font-display text-sm tracking-widest text-accent">{eyebrow}</p>
           ) : null}
-          <h2 className={cn("text-4xl text-primary md:text-5xl", eyebrow && "mt-3")}>{title}</h2>
+          <h2 className={`text-4xl text-primary md:text-5xl ${eyebrow ? "mt-3" : ""}`}>{title}</h2>
           <p className="mt-4 text-muted-foreground leading-relaxed">{body}</p>
           <div className="mt-8 flex flex-wrap gap-3">{children}</div>
         </div>

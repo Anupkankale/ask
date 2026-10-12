@@ -2,6 +2,10 @@
 @import "tw-animate-css";
 
 @source "../src";
+/* The shadcn kit in components/ui is not used by any page yet; scanning it
+ * added unused utilities to every page's render-blocking CSS. Remove this
+ * line when a page starts importing from components/ui. */
+@source not "./components/ui";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -18,6 +22,54 @@
  * 1. Add the variable to :root (light value) and .dark (dark value)
  * 2. Register it in @theme inline as --color-<name>: var(--<name>)
  */
+
+/* --- Fonts ---------------------------------------------------------------
+ * Self-hosted latin subsets instead of Google Fonts: the stylesheet request
+ * to fonts.googleapis.com blocked first paint for ~750 ms on mobile.
+ *
+ * Each web font has a "Fallback" twin built from local Arial, scaled with
+ * size-adjust and the ascent/descent overrides so it takes up the same space.
+ * Archivo Black is ~20% wider than Arial, so without this the headings
+ * reflowed when the real font arrived (most of the homepage's CLS).
+ * Overrides were measured from the font files with fontTools.
+ */
+@font-face {
+  font-family: "Archivo Black";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./assets/fonts/archivo-black-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Archivo Black Fallback";
+  src: local("Arial"), local("Liberation Sans"), local("Helvetica"), local("Roboto");
+  size-adjust: 119.97%;
+  ascent-override: 73.19%;
+  descent-override: 17.5%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("./assets/fonts/inter-latin-var.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial"), local("Liberation Sans"), local("Helvetica"), local("Roboto");
+  size-adjust: 104.9%;
+  ascent-override: 92.35%;
+  descent-override: 22.99%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Kalam";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./assets/fonts/kalam-700-latin.woff2") format("woff2");
+}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -40,6 +92,7 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-accent-bright: var(--accent-bright);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
@@ -60,8 +113,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-display: "Archivo Black", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Archivo Black", "Archivo Black Fallback", system-ui, sans-serif;
+  --font-sans: "Inter", "Inter Fallback", system-ui, sans-serif;
   /* Logo only. Kalam is a handwriting face and is not used anywhere else. */
   --font-logo: "Kalam", "Segoe Print", cursive;
 }
@@ -80,7 +133,11 @@
   --secondary-foreground: oklch(0.22 0.08 265);
   --muted: oklch(0.96 0.01 260);
   --muted-foreground: oklch(0.48 0.04 260);
-  --accent: oklch(0.7 0.21 25);
+  /* Darkened from L 0.7 so accent text and white-on-accent buttons pass
+   * WCAG AA (4.5:1). The brighter original is kept for navy sections, where
+   * the dark shade would fail instead. */
+  --accent: oklch(0.56 0.21 25);
+  --accent-bright: oklch(0.7 0.21 25);
   --accent-foreground: oklch(0.99 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
