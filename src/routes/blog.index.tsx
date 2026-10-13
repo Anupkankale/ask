@@ -5,7 +5,13 @@ import { pageHead } from "../lib/seo";
 import { CtaCard, ctaPrimary, ctaSecondary } from "../components/cta-card";
 import { listPosts } from "../lib/wp/content.functions";
 import { fallbackPosts } from "../lib/wp/fallback-posts";
-import { getFeaturedImage, getAcfImage, plainText } from "../lib/wp/types";
+import {
+  getFeaturedImage,
+  getAcfImage,
+  getPostTags,
+  plainText,
+  type PostTag,
+} from "../lib/wp/types";
 
 const postsQueryOptions = queryOptions({
   queryKey: ["wp", "posts"],
@@ -21,11 +27,23 @@ export const Route = createFileRoute("/blog/")({
         "Notes on WordPress, open source contributions, AI integrations and freelance dev life.",
       path: "/blog",
     }),
+  // ?tag=<slug> filters the list. Kept in the URL so a filtered view can be
+  // shared and survives back/forward; the canonical drops it, so filtered
+  // views never compete with /blog in search.
+  validateSearch: (search: Record<string, unknown>): { tag?: string } => ({
+    tag: typeof search.tag === "string" && search.tag ? search.tag : undefined,
+  }),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(postsQueryOptions);
   },
   component: Blog,
 });
+
+const chipBase =
+  "inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium transition";
+const chipActive = `${chipBase} border-primary bg-primary text-primary-foreground`;
+const chipIdle = `${chipBase} border-border bg-card text-primary hover:border-accent hover:text-accent`;
+const chipCount = "text-xs opacity-70";
 
 function formatDate(value: string) {
   try {
@@ -42,7 +60,25 @@ function formatDate(value: string) {
 function Blog() {
   const { data: wpPosts } = useSuspenseQuery(postsQueryOptions);
   // WordPress wins whenever it has anything to serve; these only fill the gap.
-  const posts = wpPosts.length > 0 ? wpPosts : fallbackPosts;
+  const allPosts = wpPosts.length > 0 ? wpPosts : fallbackPosts;
+  const { tag: activeTag } = Route.useSearch();
+
+  // Every tag in use, most-used first, with how many posts carry it.
+  const tagCounts = new Map<string, PostTag & { count: number }>();
+  for (const post of allPosts) {
+    for (const t of getPostTags(post)) {
+      const entry = tagCounts.get(t.slug) ?? { ...t, count: 0 };
+      entry.count += 1;
+      tagCounts.set(t.slug, entry);
+    }
+  }
+  const tags = [...tagCounts.values()].sort(
+    (a, b) => b.count - a.count || a.name.localeCompare(b.name),
+  );
+  const activeName = activeTag ? tagCounts.get(activeTag)?.name : undefined;
+  const posts = activeTag
+    ? allPosts.filter((post) => getPostTags(post).some((t) => t.slug === activeTag))
+    : allPosts;
 
   return (
     <>
@@ -56,10 +92,59 @@ function Blog() {
         lead="A slow blog. I write roughly every couple of weeks about things I actually use at work."
       />
       <section className="mx-auto max-w-6xl px-6 py-20">
+        {tags.length > 0 ? (
+          <nav aria-label="Filter posts by topic" className="mb-10">
+            <p className="font-display text-xs tracking-widest text-accent">BROWSE BY TOPIC</p>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              <li>
+                <Link
+                  to="/blog"
+                  search={{}}
+                  activeOptions={{ exact: true }}
+                  aria-current={!activeTag ? "page" : undefined}
+                  className={!activeTag ? chipActive : chipIdle}
+                >
+                  All <span className={chipCount}>{allPosts.length}</span>
+                </Link>
+              </li>
+              {tags.map((t) => (
+                <li key={t.slug}>
+                  <Link
+                    to="/blog"
+                    search={{ tag: t.slug }}
+                    activeOptions={{ exact: true }}
+                    aria-current={activeTag === t.slug ? "page" : undefined}
+                    className={activeTag === t.slug ? chipActive : chipIdle}
+                  >
+                    {t.name} <span className={chipCount}>{t.count}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
+
+        {activeTag && posts.length === 0 ? (
+          <div className="rounded-2xl border border-border bg-card p-10 text-center">
+            <p className="text-lg text-primary">
+              No posts tagged &ldquo;{activeName ?? activeTag}&rdquo; yet.
+            </p>
+            <Link
+              to="/blog"
+              search={{}}
+              activeOptions={{ exact: true }}
+              className="mt-4 inline-flex text-sm font-semibold text-accent hover:underline"
+            >
+              See all posts
+            </Link>
+          </div>
+        ) : null}
+
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => {
             const cover = getAcfImage(post.acf?.cover_image) ?? getFeaturedImage(post);
             const excerpt = post.acf?.excerpt_custom ?? plainText(post.excerpt.rendered, 220);
+            const postTags = getPostTags(post);
             return (
               <Link
                 key={post.id}
@@ -91,6 +176,18 @@ function Blog() {
                   <p className="mt-3 line-clamp-4 text-sm text-muted-foreground leading-relaxed">
                     {excerpt}
                   </p>
+                  {postTags.length > 0 ? (
+                    <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Topics">
+                      {postTags.map((t) => (
+                        <li
+                          key={t.slug}
+                          className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-primary"
+                        >
+                          {t.name}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                   <span className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-semibold text-accent group-hover:underline">
                     Read post <span aria-hidden="true">&#8594;</span>
                   </span>

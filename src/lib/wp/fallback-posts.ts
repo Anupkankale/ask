@@ -3,7 +3,7 @@
 // WPPost shape as the REST response, so the blog routes render them through the
 // exact same code path. As soon as real posts exist, those win and these vanish.
 
-import type { WPPost } from "./types";
+import { tagSlug, type WPPost } from "./types";
 
 interface Draft {
   slug: string;
@@ -12,12 +12,75 @@ interface Draft {
   excerpt: string;
   readingTime: number;
   cover: string;
-  /** Where the piece was originally published. */
-  linkedin: string;
+  /** Where the piece was originally published, if anywhere. */
+  linkedin?: string;
+  /** Shown on cards and used by the blog's tag filter. */
+  tags: string[];
   body: string;
 }
 
 const drafts: Draft[] = [
+  {
+    slug: "open-source-summit-india-linus-torvalds",
+    date: "2026-10-13T09:00:00",
+    title: "From a curious kid staring at a Linux terminal to listening to Linus Torvalds live",
+    excerpt:
+      "As a kid, a black Linux terminal felt like magic. Years later I sat at Open Source Summit India listening to Linus Torvalds, and one idea from his talk stayed with me: AI gets you from zero to demo, not from zero to production.",
+    readingTime: 5,
+    cover: "/blog/linux-terminal.svg",
+    tags: ["Open Source", "Linux", "AI", "Events"],
+    body: `
+      <p>When I was a kid, I was always curious about Linux. Seeing a black terminal screen filled with colorful commands felt like magic to me. It looked like something hackers used in movies, and I always wondered:</p>
+      <p><strong>"What is happening behind this black screen? How can someone control a computer just by typing commands? And how does all of this actually work?"</strong></p>
+      <p>I didn't know much about Linux back then. I was just a curious kid, fascinated by something I couldn't fully understand. Every command felt like a secret instruction, every line of output felt like a clue, and the terminal seemed to hold a world of possibilities waiting to be explored.</p>
+      <p>That curiosity slowly turned into a desire to learn more. I started exploring Linux, experimenting with command-line tools, and discovering the world of open source software. The more I learned, the more I realized that technology wasn't just about using computers. It was about understanding how things worked behind the scenes.</p>
+      <p>Years passed, and that little curiosity grew into a passion for software development. I began working with technologies like PHP, WordPress, Vue.js, and Nuxt.js, building things, solving problems, and learning something new with every project. Along the way, open source became more than just a technology I admired. It became a community and a way of thinking that I wanted to be part of.</p>
+      <p>But I never imagined that one day, I would get the chance to listen to the person who started it all.</p>
+
+      <h2>A moment that connected the past with the present</h2>
+      <p>At Open Source Summit India, I had the opportunity to see <strong>Linus Torvalds, the creator of Linux, speak live on stage.</strong></p>
+      <figure>
+        <img src="/blog/open-source-summit-india/venue.webp" alt="Open Source Summit India banners by The Linux Foundation lining the venue lobby" width="480" height="853" loading="lazy" decoding="async" />
+        <figcaption>Open Source Summit India, organised by The Linux Foundation.</figcaption>
+      </figure>
+      <p>For a moment, I thought about that curious kid staring at a black terminal screen, wondering how everything worked.</p>
+      <p>And there I was, years later, listening in person to the person whose work had helped shape the world of Linux.</p>
+      <figure>
+        <img src="/blog/open-source-summit-india/badge.webp" alt="Anup Kankale's Open Source Summit India attendee badge with AI and Data, Linux and Cloud ribbons" width="480" height="853" loading="lazy" decoding="async" />
+        <figcaption>My attendee badge, with the AI &amp; Data, Linux and Cloud track ribbons.</figcaption>
+      </figure>
+      <p>It felt like one of those moments when you pause and realize how far curiosity can take you. Something that once seemed distant and almost mysterious had become part of my own journey in technology.</p>
+      <p>While listening to Linus, one topic that particularly caught my attention was his perspective on artificial intelligence and large language models (LLMs).</p>
+
+      <h2>From "zero to demo" to "zero to production"</h2>
+      <p>AI is changing the way we write code. Today, developers can use AI tools to generate functions, build interfaces, explore unfamiliar technologies, and turn ideas into working prototypes faster than ever before.</p>
+      <p>One idea from Linus's talk that really stayed with me was the difference between going from <strong>"zero to demo"</strong> and going from <strong>"zero to production."</strong></p>
+      <p>Getting from zero to a demo is becoming much easier with AI. You can have an idea, describe what you want, generate some code, and quickly see something working on your screen. It's exciting, especially when you're experimenting with a new idea or learning a new technology.</p>
+      <p>But building a demo and building production-ready software are two very different things.</p>
+      <p>Real-world software needs more than code that simply works in a happy-path scenario. It needs to be reliable, secure, maintainable, and capable of handling situations that weren't part of the original experiment.</p>
+      <p>Sometimes, AI can generate a quick fix that solves the immediate problem without addressing the root cause. It might make the error disappear, but it doesn't necessarily make the underlying system better.</p>
+      <p>That's where experienced developers and maintainers still play a crucial role. Understanding the code, questioning the solution, investigating the root cause, and thinking about long-term maintainability are skills that go beyond simply generating code.</p>
+      <p>This perspective resonated with me because, as developers, it's easy to get excited about how quickly we can build something with AI. But speed is only one part of the equation. We also need to understand what we're building and why.</p>
+      <blockquote><p><strong>AI can help us get started faster, but good engineering is what helps us build software that lasts.</strong></p></blockquote>
+
+      <h2>The curiosity never really goes away</h2>
+      <p>Walking away from that experience, I found myself thinking about how much technology has changed since the days when I first became curious about Linux.</p>
+      <p>Today, we have AI assistants that can explain code, generate applications, and help us solve problems in seconds. The tools available to developers are evolving faster than ever.</p>
+      <p>Yet, the most important part of my journey remains the same: curiosity.</p>
+      <p>That same curiosity that once made me stare at a terminal is what pushes me to explore new technologies, contribute to open source, experiment with AI, and keep improving as a developer.</p>
+      <p>Listening to Linus Torvalds speak live at Open Source Summit India was more than just an exciting experience. It was a reminder of where my interest in technology began and why I continue to pursue it.</p>
+      <figure>
+        <img src="/blog/open-source-summit-india/panel.webp" alt="A panel on stage at Open Source Summit India about open source innovation powering India's digital public infrastructure" width="480" height="853" loading="lazy" decoding="async" />
+        <figcaption>One of the summit's panels: open source innovation powering India's digital public infrastructure.</figcaption>
+      </figure>
+      <p>I may have started with questions about a black terminal screen, but those questions led me into a much bigger world of software, collaboration, and continuous learning.</p>
+      <p>And if there's one thing I've learned along the way, it's this:</p>
+      <p><strong>Never underestimate where a little curiosity can take you.</strong></p>
+      <p>Sometimes, it can take you from a kid fascinated by Linux commands to a room where you're listening to the creator of Linux share his thoughts on the future of software.</p>
+      <p>And sometimes, the most meaningful part of the journey isn't how much you've learned, but realizing that you still have so much left to explore.</p>
+      <p><em>I'm Anup Kankale, a developer passionate about open source, WordPress, PHP, frontend technologies, and exploring AI-powered development. This is one more chapter in my ongoing journey of learning, building, and contributing to technology.</em></p>
+    `,
+  },
   {
     slug: "travel-agency-losing-leads-fixed-without-a-crm",
     date: "2026-04-05T09:00:00",
@@ -26,6 +89,7 @@ const drafts: Draft[] = [
       "They had traffic, a working form and leads arriving daily. What they did not have was any idea which of those leads had been called. A custom WordPress plugin solved it for the price of building it once.",
     readingTime: 8,
     cover: "/blog/lead-dashboard.svg",
+    tags: ["WordPress", "Plugins", "Case Study"],
     linkedin:
       "https://www.linkedin.com/pulse/travel-agency-losing-leads-i-fixed-without-crm-anup-kankale-13csf/",
     body: `
@@ -83,6 +147,7 @@ const drafts: Draft[] = [
       "An end-to-end pipeline that writes an SEO-shaped article and publishes it to WordPress in ten to fifteen seconds, for no ongoing AI cost. Here is the architecture and the parts that were awkward.",
     readingTime: 7,
     cover: "/blog/ai-content-pipeline.svg",
+    tags: ["AI", "Automation", "WordPress"],
     linkedin:
       "https://www.linkedin.com/pulse/just-built-ai-powered-content-automation-system-anup-kankale-b1dqf/",
     body: `
@@ -132,6 +197,7 @@ const drafts: Draft[] = [
       "You have traffic. You do not know which companies it belongs to. This plugin uses reverse IP lookup to name the organisations reading your site, and keeps every byte of it inside your own database.",
     readingTime: 6,
     cover: "/blog/visitor-intelligence.svg",
+    tags: ["WordPress", "Plugins", "Analytics"],
     linkedin: "https://www.linkedin.com/feed/update/urn:li:activity:7439930796095778816/",
     body: `
       <p>Most B2B sites have a problem nobody says out loud. Traffic arrives, analytics counts it, and none of it tells you who is actually interested in what you sell.</p>
@@ -182,6 +248,18 @@ function toPost(draft: Draft, index: number): WPPost {
     excerpt: { rendered: `<p>${draft.excerpt}</p>` },
     featured_media: 0,
     link: `/blog/${draft.slug}`,
+    // Same shape as WordPress's embedded terms, so getPostTags() reads real
+    // and placeholder posts the same way.
+    _embedded: {
+      "wp:term": [
+        draft.tags.map((name, i) => ({
+          id: -(index * 100 + i + 1),
+          name,
+          slug: tagSlug(name),
+          taxonomy: "post_tag",
+        })),
+      ],
+    },
     acf: {
       excerpt_custom: draft.excerpt,
       reading_time: draft.readingTime,
@@ -190,7 +268,10 @@ function toPost(draft: Draft, index: number): WPPost {
   };
 }
 
-export const fallbackPosts: WPPost[] = drafts.map(toPost);
+// Newest first, matching the order WordPress returns.
+export const fallbackPosts: WPPost[] = drafts
+  .map(toPost)
+  .sort((a, b) => b.date.localeCompare(a.date));
 
 export function findFallbackPost(slug: string): WPPost | null {
   return fallbackPosts.find((post) => post.slug === slug) ?? null;

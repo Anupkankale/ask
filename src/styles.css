@@ -380,6 +380,31 @@
   font-size: 0.9em;
 }
 
+/* Photos in a post. The event shots are portrait phone photos, so they are
+ * capped at a phone-like width and centred rather than stretched to the
+ * column, which would make them taller than the screen. */
+.post-body figure {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.post-body figure img {
+  display: block;
+  width: 100%;
+  max-width: 22rem;
+  height: auto;
+  margin-inline: auto;
+  border-radius: 1rem;
+  box-shadow: 0 20px 40px -24px oklch(0.28 0.11 265 / 0.45);
+}
+
+.post-body figcaption {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
 /* Offset anchor targets so a sticky header does not cover the heading a
  * table-of-contents link jumps to. */
 .post-body h2[id] {

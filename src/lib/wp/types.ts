@@ -138,3 +138,32 @@ export function plainText(html: string | undefined, maxLength = 200): string {
     .trim();
   return stripped.length > maxLength ? `${stripped.slice(0, maxLength - 1)}…` : stripped;
 }
+
+export interface PostTag {
+  name: string;
+  slug: string;
+}
+
+export function tagSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * Categories and tags from a post's embedded terms (requested with
+ * `_embed=wp:term`), minus WordPress's default "Uncategorized".
+ */
+export function getPostTags(post: Pick<WPBase, "_embedded">): PostTag[] {
+  const terms = post._embedded?.["wp:term"]?.flat() ?? [];
+  const seen = new Set<string>();
+  const tags: PostTag[] = [];
+  for (const term of terms) {
+    if (term.taxonomy !== "post_tag" && term.taxonomy !== "category") continue;
+    if (term.slug === "uncategorized" || seen.has(term.slug)) continue;
+    seen.add(term.slug);
+    tags.push({ name: term.name, slug: term.slug });
+  }
+  return tags;
+}

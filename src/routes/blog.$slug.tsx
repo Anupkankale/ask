@@ -7,7 +7,13 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { getPostBySlug } from "../lib/wp/content.functions";
 import { findFallbackPost, fallbackOgImage, fallbackPostSource } from "../lib/wp/fallback-posts";
 import { absoluteUrl, SITE_NAME, SITE_URL } from "../lib/seo";
-import { getFeaturedImage, getAcfImage, plainText, type WPPost } from "../lib/wp/types";
+import {
+  getFeaturedImage,
+  getAcfImage,
+  getPostTags,
+  plainText,
+  type WPPost,
+} from "../lib/wp/types";
 
 const postQueryOptions = (slug: string) =>
   queryOptions({
@@ -150,6 +156,7 @@ function PostPage() {
   const { html: bodyHtml, headings } = withHeadingIds(post.content.rendered);
   const source = fallbackPostSource(slug);
   const lead = post.acf?.excerpt_custom ?? plainText(post.excerpt.rendered, 240);
+  const tags = getPostTags(post);
 
   return (
     <div>
@@ -173,6 +180,21 @@ function PostPage() {
                 dangerouslySetInnerHTML={{ __html: post.title.rendered }}
               />
               <p className="mt-5 text-lg text-muted-foreground leading-relaxed">{lead}</p>
+              {tags.length > 0 ? (
+                <ul className="mt-5 flex flex-wrap gap-2" aria-label="Topics">
+                  {tags.map((t) => (
+                    <li key={t.slug}>
+                      <Link
+                        to="/blog"
+                        search={{ tag: t.slug }}
+                        className="inline-flex rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-primary transition hover:border-accent hover:text-accent"
+                      >
+                        {t.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
               {source ? (
                 <a
                   href={source}
